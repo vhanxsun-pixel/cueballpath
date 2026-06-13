@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台球工具 UI 风格对比</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; font-family: -apple-system, 'PingFang SC', sans-serif; color: #fff; padding: 20px; }
+h1 { text-align: center; font-size: 18px; color: #888; margin-bottom: 24px; font-weight: 400; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1400px; margin: 0 auto; }
+.card { border-radius: 12px; overflow: hidden; }
+.card h2 { padding: 16px 20px 8px; font-size: 15px; font-weight: 600; }
+.card p { padding: 0 20px 12px; font-size: 12px; opacity: 0.6; }
+.table-area { position: relative; margin: 12px; border-radius: 8px; aspect-ratio: 2/1; overflow: hidden; }
+.toolbar-demo { display: flex; gap: 6px; padding: 10px 12px; flex-wrap: wrap; }
+.info-demo { position: absolute; top: 8px; right: 8px; padding: 10px 14px; border-radius: 8px; font-size: 11px; line-height: 1.8; }
+
+/* ===== Style A: Linear ===== */
+.linear { background: #010102; border: 1px solid #23252a; }
+.linear h2 { color: #f7f8f8; }
+.linear .table-area { background: #0a5c2e; border: 1px solid #23252a; }
+.linear .table-area::after { content: ''; position: absolute; inset: 0; border: 2px solid rgba(94,106,210,0.3); border-radius: 8px; pointer-events: none; }
+.linear .ball-cue { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f7f8f8; border: 2px solid #5e6ad2; top: 60%; left: 30%; }
+.linear .ball-obj { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #5e6ad2; border: 2px solid #7c8aff; top: 35%; left: 60%; }
+.linear .traj { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.linear .traj line { stroke: #5e6ad2; stroke-width: 2; stroke-dasharray: 6 4; }
+.linear .traj circle { fill: #5e6ad2; }
+.linear .ghost { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 1.5px dashed rgba(247,248,248,0.5); top: 38%; left: 52%; }
+.linear .info-demo { background: #0f1011; border: 1px solid #23252a; color: #f7f8f8; }
+.linear .info-demo .val { color: #5e6ad2; font-weight: 700; }
+.linear .btn-l { padding: 6px 12px; background: #0f1011; border: 1px solid #23252a; color: #f7f8f8; border-radius: 8px; font-size: 12px; cursor: pointer; }
+.linear .btn-l.active { background: #5e6ad2; border-color: #5e6ad2; color: #fff; }
+.linear .diamond { position: absolute; width: 5px; height: 5px; background: #5e6ad2; }
+.linear .grid-line { position: absolute; border-left: 1px solid rgba(94,106,210,0.15); height: 100%; top: 0; }
+.linear .formula { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 18px; font-weight: 700; color: #5e6ad2; letter-spacing: 1px; }
+
+/* ===== Style B: Raycast ===== */
+.raycast { background: #07080a; border: 1px solid #242728; }
+.raycast h2 { color: #f4f4f6; }
+.raycast .table-area { background: #0b6b33; border: 1px solid #242728; }
+.raycast .ball-cue { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; border: 2px solid #fff; top: 60%; left: 30%; box-shadow: 0 0 8px rgba(255,255,255,0.3); }
+.raycast .ball-obj { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #ef4444; border: 2px solid #fca5a5; top: 35%; left: 60%; }
+.raycast .traj { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.raycast .traj line { stroke: #facc15; stroke-width: 2.5; stroke-dasharray: 7 4; }
+.raycast .traj circle { fill: #facc15; }
+.raycast .ghost { position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px dashed rgba(255,255,255,0.6); top: 38%; left: 52%; }
+.raycast .info-demo { background: #0d0d0d; border: 1px solid #242728; color: #f4f4f6; }
+.raycast .info-demo .val { color: #facc15; font-weight: 700; }
+.raycast .btn-r { padding: 6px 14px; background: #ffffff; border: none; color: #07080a; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.raycast .btn-r.sec { background: #101111; border: 1px solid #242728; color: #f4f4f6; border-radius: 20px; }
+.raycast .btn-r.active { background: #facc15; color: #000; }
+.raycast .diamond { position: absolute; width: 6px; height: 6px; background: #facc15; border-radius: 1px; }
+.raycast .grid-line { position: absolute; border-left: 1px solid rgba(250,204,21,0.12); height: 100%; top: 0; }
+.raycast .formula { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 18px; font-weight: 700; color: #facc15; text-shadow: 0 0 12px rgba(250,204,21,0.4); }
+
+/* ===== Style C: Spotify ===== */
+.spotify { background: #121212; border: 1px solid #333; }
+.spotify h2 { color: #fff; }
+.spotify .table-area { background: #0d6b36; border-radius: 12px; box-shadow: inset 0 2px 12px rgba(0,0,0,0.4); }
+.spotify .ball-cue { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 2px solid #1ed760; top: 60%; left: 30%; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.spotify .ball-obj { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #e74c3c; border: 2px solid #ff7675; top: 35%; left: 60%; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.spotify .traj { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.spotify .traj line { stroke: #1ed760; stroke-width: 3; stroke-dasharray: 8 5; }
+.spotify .traj circle { fill: #1ed760; }
+.spotify .ghost { position: absolute; width: 24px; height: 24px; border-radius: 50%; border: 2px dashed rgba(30,215,96,0.6); top: 38%; left: 52%; box-shadow: 0 0 6px rgba(30,215,96,0.2); }
+.spotify .info-demo { background: #181818; border: 1px solid #333; color: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+.spotify .info-demo .val { color: #1ed760; font-weight: 700; }
+.spotify .btn-s { padding: 7px 16px; background: #1ed760; border: none; color: #000; border-radius: 500px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.spotify .btn-s.sec { background: #1f1f1f; border: 1px solid #4d4d4d; color: #fff; border-radius: 500px; font-weight: 500; }
+.spotify .btn-s.active { background: #1ed760; color: #000; }
+.spotify .diamond { position: absolute; width: 6px; height: 6px; background: #1ed760; border-radius: 50%; }
+.spotify .grid-line { position: absolute; border-left: 1px solid rgba(30,215,96,0.15); height: 100%; top: 0; }
+.spotify .formula { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 18px; font-weight: 800; color: #1ed760; text-shadow: 0 0 16px rgba(30,215,96,0.5); }
+
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; max-width: 500px; } }
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462858695675048" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<h1>选一个你看着最舒服的风格</h1>
+
+<div class="grid">
+
+<!-- Linear Style -->
+<div class="card linear">
+  <h2>A. Linear 风格</h2>
+  <p>纯黑底 + 薰衣草蓝 + 极细边框 · 精密工具感</p>
+  <div class="table-area">
+    <div class="grid-line" style="left:25%"></div>
+    <div class="grid-line" style="left:50%"></div>
+    <div class="grid-line" style="left:75%"></div>
+    <svg class="traj" viewBox="0 0 200 100" preserveAspectRatio="none">
+      <line x1="30" y1="62" x2="45" y2="5" />
+      <line x1="45" y1="5" x2="10" y2="40" />
+      <line x1="10" y1="40" x2="60" y2="37" />
+      <circle cx="45" cy="5" r="2.5" />
+      <circle cx="10" cy="40" r="2.5" />
+    </svg>
+    <div class="ghost"></div>
+    <div class="ball-cue"></div>
+    <div class="ball-obj"></div>
+    <div class="formula">3.5 − 1.5 = 2</div>
+    <div class="info-demo">
+      <div>模式 <span class="val">颗星2库</span></div>
+      <div>切入角 <span class="val">32° 半球</span></div>
+      <div>吃库点 <span class="val">2.0</span></div>
+    </div>
+  </div>
+  <div class="toolbar-demo">
+    <button class="btn-l active">瞄准</button>
+    <button class="btn-l">颗星2库</button>
+    <button class="btn-l">1库</button>
+    <button class="btn-l">假想球</button>
+    <button class="btn-l">网格</button>
+  </div>
+</div>
+
+<!-- Raycast Style -->
+<div class="card raycast">
+  <h2>B. Raycast 风格</h2>
+  <p>纯黑底 + 亮黄轨迹 + 白色药丸按钮 · 高对比度</p>
+  <div class="table-area">
+    <div class="grid-line" style="left:25%"></div>
+    <div class="grid-line" style="left:50%"></div>
+    <div class="grid-line" style="left:75%"></div>
+    <svg class="traj" viewBox="0 0 200 100" preserveAspectRatio="none">
+      <line x1="30" y1="62" x2="45" y2="5" />
+      <line x1="45" y1="5" x2="10" y2="40" />
+      <line x1="10" y1="40" x2="60" y2="37" />
+      <circle cx="45" cy="5" r="2.5" />
+      <circle cx="10" cy="40" r="2.5" />
+    </svg>
+    <div class="ghost"></div>
+    <div class="ball-cue"></div>
+    <div class="ball-obj"></div>
+    <div class="formula">3.5 − 1.5 = 2</div>
+    <div class="info-demo">
+      <div>模式 <span class="val">颗星2库</span></div>
+      <div>切入角 <span class="val">32° 半球</span></div>
+      <div>吃库点 <span class="val">2.0</span></div>
+    </div>
+  </div>
+  <div class="toolbar-demo">
+    <button class="btn-r active">瞄准</button>
+    <button class="btn-r sec">颗星2库</button>
+    <button class="btn-r sec">1库</button>
+    <button class="btn-r sec">假想球</button>
+    <button class="btn-r sec">网格</button>
+  </div>
+</div>
+
+<!-- Spotify Style -->
+<div class="card spotify">
+  <h2>C. Spotify 风格</h2>
+  <p>深灰底 + 活力绿 + 圆润药丸 + 阴影层次 · 沉浸触控感</p>
+  <div class="table-area">
+    <div class="grid-line" style="left:25%"></div>
+    <div class="grid-line" style="left:50%"></div>
+    <div class="grid-line" style="left:75%"></div>
+    <svg class="traj" viewBox="0 0 200 100" preserveAspectRatio="none">
+      <line x1="30" y1="62" x2="45" y2="5" />
+      <line x1="45" y1="5" x2="10" y2="40" />
+      <line x1="10" y1="40" x2="60" y2="37" />
+      <circle cx="45" cy="5" r="3" />
+      <circle cx="10" cy="40" r="3" />
+    </svg>
+    <div class="ghost"></div>
+    <div class="ball-cue"></div>
+    <div class="ball-obj"></div>
+    <div class="formula">3.5 − 1.5 = 2</div>
+    <div class="info-demo">
+      <div>模式 <span class="val">颗星2库</span></div>
+      <div>切入角 <span class="val">32° 半球</span></div>
+      <div>吃库点 <span class="val">2.0</span></div>
+    </div>
+  </div>
+  <div class="toolbar-demo">
+    <button class="btn-s active">瞄准</button>
+    <button class="btn-s sec">颗星2库</button>
+    <button class="btn-s sec">1库</button>
+    <button class="btn-s sec">假想球</button>
+    <button class="btn-s sec">网格</button>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

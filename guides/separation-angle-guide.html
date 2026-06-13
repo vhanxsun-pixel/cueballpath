@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cue Ball Separation Angle: Follow, Stun & Draw Paths Explained | CueBallPath</title>
+    <meta name="description" content="Complete guide to cue ball separation angles after contact. Learn how follow, stun, and draw spin change the deflection path, with formulas and interactive visualization.">
+    <link rel="canonical" href="https://cueballpath.com/guides/separation-angle-guide.html">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07080a;
+            --surface: #101111;
+            --border: #222;
+            --text: #e8e8e8;
+            --muted: #888;
+            --accent: #ffc533;
+            --green: #59d499;
+            --blue: #57c1ff;
+            --red: #ff5555;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        nav .brand {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        nav a:hover { color: var(--text); }
+        .content {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 2.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+        }
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        ul, ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        li { margin-bottom: 0.5rem; }
+        a { color: var(--blue); }
+        a:hover { color: var(--accent); }
+        .meta {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .formula {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: var(--green);
+        }
+        .spin-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin: 1rem 0;
+        }
+        .spin-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .spin-card.follow h4 { color: var(--green); }
+        .spin-card.stun h4 { color: var(--accent); }
+        .spin-card.draw h4 { color: var(--blue); }
+        .spin-card p { margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .spin-card .formula { margin: 0.5rem 0 0; padding: 0.5rem 1rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 0.5rem 0.6rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        th {
+            background: var(--surface);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .color-follow { color: var(--green); }
+        .color-stun { color: var(--accent); }
+        .color-draw { color: var(--blue); }
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        footer a {
+            color: var(--muted);
+            text-decoration: none;
+            margin: 0 0.75rem;
+        }
+        footer a:hover { color: var(--text); }
+    </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462858695675048" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav>
+        <a href="/" class="brand">CueBallPath</a>
+        <a href="/">Home</a>
+        <a href="/tool.html">Tool</a>
+        <a href="/guides/how-to-aim-pool.html">Guides</a>
+        <a href="/about.html">About</a>
+    </nav>
+
+    <article class="content">
+        <h1>Cue Ball Separation Angle: Follow, Stun & Draw Paths Explained</h1>
+        <p class="meta">How spin changes the cue ball's path after contact. Formulas, a quick-reference table, and practical applications for position play.</p>
+
+        <p>After the cue ball hits the object ball, it does not simply bounce off in a random direction. The angle it takes depends on two things you control: the cut angle of the shot, and the spin on the cue ball at the moment of contact. Understanding how these two factors combine gives you predictable cue ball paths on every shot, which is the foundation of position play.</p>
+
+        <p>The separation angle is the angle between the cue ball's path after contact and the original aim line. On a pure stun shot, this is always 90°. With follow or draw, the angle changes in predictable ways that you can calculate, visualize, and practice.</p>
+
+        <h2>The Three Spin Types</h2>
+
+        <div class="spin-card follow">
+            <h4>Follow (Top Spin)</h4>
+            <p>Hit above center. The cue ball rolls forward after contact, reducing the separation angle below 90°. The harder you follow, the more the cue ball continues forward along the original aim line. On a straight shot, pure follow makes the cue ball chase the object ball.</p>
+            <div class="formula">separation = 90° - 30° × cos(cut_angle)</div>
+            <p>Range: 60° (straight shot) to 90° (extreme cut)</p>
+        </div>
+
+        <div class="spin-card stun">
+            <h4>Stun (No Spin at Contact)</h4>
+            <p>Hit center with enough speed that the cue ball arrives at the object ball with no residual spin. The cue ball deflects at exactly 90° from the aim line regardless of the cut angle. This is the baseline from which follow and draw deviate.</p>
+            <div class="formula">separation = 90° (always)</div>
+            <p>The 90° stun angle is a fundamental law of equal-mass elastic collisions.</p>
+        </div>
+
+        <div class="spin-card draw">
+            <h4>Draw (Back Spin)</h4>
+            <p>Hit below center. The cue ball pulls back after contact, increasing the separation angle above 90°. The more draw you apply, the more the cue ball retreats toward you. On a straight shot, the cue ball comes straight back to your cue tip.</p>
+            <div class="formula">separation = 90° + 60° × cos(cut_angle)</div>
+            <p>Range: 90° (extreme cut) to 150° (straight shot)</p>
+        </div>
+
+        <h2>Separation Angle Reference Table</h2>
+
+        <p>This table shows the approximate separation angle for each spin type at common cut angles. Use it to predict where the cue ball will go after any shot.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Cut Angle</th>
+                    <th class="color-follow">Follow</th>
+                    <th class="color-stun">Stun</th>
+                    <th class="color-draw">Draw</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0° (straight)</td>
+                    <td class="color-follow">60°</td>
+                    <td class="color-stun">90°</td>
+                    <td class="color-draw">150°</td>
+                </tr>
+                <tr>
+                    <td>15°</td>
+                    <td class="color-follow">61°</td>
+                    <td class="color-stun">90°</td>
+                    <td class="color-draw">148°</td>
+                </tr>
+                <tr>
+                    <td>30°</td>
+                    <td class="color-follow">64°</td>
+                    <td class="color-stun">90°</td>
+                    <td class="color-draw">142°</td>
+                </tr>
+                <tr>
+                    <td>45°</td>
+                    <td class="color-follow">69°</td>
+                    <td class="color-stun">90°</td>
+                    <td class="color-draw">132°</td>
+                </tr>
+                <tr>
+                    <td>60°</td>
+                    <td class="color-follow">75°</td>
+                    <td class="color-stun">90°</td>
+                    <td class="color-draw">120°</td>
+                </tr>
+                <tr>
+                    <td>75°</td>
+                    <td class="color-follow">82°</td>
+                    <td class="color-stun">90°</td>
+                    <td class="color-draw">105°</td>
+                </tr>
+                <tr>
+                    <td>90° (miss)</td>
+                    <td class="color-follow">90°</td>
+                    <td class="color-stun">90°</td>
+                    <td class="color-draw">90°</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Notice the pattern: as the cut angle increases toward 90°, all three spin types converge to the same 90° separation. This makes sense physically. On an extremely thin cut, the cue ball barely touches the object ball and continues almost straight regardless of its spin. Spin only matters when there is enough contact to transfer energy.</p>
+
+        <h2>Why These Formulas Work</h2>
+
+        <p>The 90° stun angle comes directly from conservation of momentum and energy in a collision between two equal-mass spheres. When the cue ball has no spin at impact, it has zero velocity component along the line connecting the two ball centers after the collision. All its remaining velocity is perpendicular to that line, which gives the 90° angle.</p>
+
+        <p>Follow and draw modify this by adding a velocity component after the collision. Top spin creates a forward rolling force that turns the cue ball's path toward the aim line. Backspin creates a backward force that rotates the path away from the aim line. The cos(cut_angle) factor accounts for the fact that spin has maximum effect on straight shots and diminishing effect as the cut gets thinner.</p>
+
+        <p>The coefficients (30° for follow, 60° for draw) are empirical approximations based on typical playing conditions. They assume moderate spin with a standard stroke. Maximum draw on a straight shot with professional technique can exceed 150° separation (nearly straight back), but 150° represents a good working model for training purposes.</p>
+
+        <h2>The Power Factor</h2>
+
+        <p>The formulas above assume moderate speed. In reality, power affects the separation angle in two ways:</p>
+
+        <ul>
+            <li><strong>Harder shots maintain spin longer.</strong> On a soft follow shot over a long distance, the cloth friction converts topspin to rolling contact before the cue ball reaches the object ball. The ball arrives in a natural rolling state, producing less extreme follow effect. A firm stroke preserves more topspin through contact.</li>
+            <li><strong>Stun requires more speed at distance.</strong> A stun shot requires the cue ball to arrive with no spin. Over short distances, a center-ball hit is enough. Over long distances, you actually need slight draw to counteract the natural topspin that develops as the ball rolls. This is why long-distance stun shots are hit below center.</li>
+        </ul>
+
+        <p>For position planning, think of power as controlling distance along the separation line, not changing the angle itself. A firm follow shot sends the cue ball further along the follow path but at roughly the same angle as a soft follow. The angle is primarily determined by the type and amount of spin, not the speed.</p>
+
+        <h2>Practical Applications for Position Play</h2>
+
+        <h3>Planning Two Shots Ahead</h3>
+        <p>Good position play means choosing a separation angle that leaves the cue ball in an ideal spot for the next shot. Once you know the cut angle of your current shot, you have three distinct paths available (follow, stun, draw) and infinite gradations between them by varying the tip height on the cue ball.</p>
+
+        <p>For example, on a 30° cut shot:</p>
+        <ul>
+            <li>Follow sends the cue ball at ~64° from the aim line (forward-ish)</li>
+            <li>Stun sends it at 90° (sideways)</li>
+            <li>Draw pulls it at ~142° (back toward you)</li>
+        </ul>
+
+        <p>That is a 78° range of possible cue ball paths from a single shot. Knowing these three lines lets you visualize exactly where the cue ball ends up for each option and choose the one that sets up the best next shot.</p>
+
+        <h3>The Natural Angle</h3>
+        <p>In practice, most casual shots are hit with natural roll (slight topspin from the rolling motion). This produces a separation slightly less than 90° without conscious effort. Many players call this the natural angle or running english line. It is the default cue ball path when you hit center ball at medium speed on a cut shot of moderate length.</p>
+
+        <p>When you hear coaches say a position is on the natural angle, they mean you can get there with center ball and no special technique. These are the easiest positions to achieve consistently because they require no precise spin application.</p>
+
+        <h3>When Draw Becomes Essential</h3>
+        <p>Draw is most powerful on straighter shots and loses effectiveness as the cut angle increases. This is visible in the table: at 0°, draw gives you 150° separation (nearly straight back). At 60°, draw only gives 120° (barely past sideways). At 75°, draw barely adds anything over stun.</p>
+
+        <p>This has a critical practical implication: if you need the cue ball to come back toward you, you must have a relatively straight shot. If the shot requires a significant cut angle, draw alone cannot bring the cue ball back far enough. You may need to combine draw with sidespin or choose a different positional route entirely.</p>
+
+        <h2>Visualizing Separation in Your Training Tool</h2>
+
+        <p>Our <a href="/tool.html">interactive training tool</a> has a dedicated hit-point module that shows the separation line for any combination of spin and cut angle in real time. You can drag the cue ball and target ball to any position, select high/center/low and power 1-5, and immediately see the predicted cue ball path after contact.</p>
+
+        <p>The tool draws three colored lines for each shot:</p>
+        <ul>
+            <li><span style="color:var(--green)">Green line</span> — follow path</li>
+            <li><span style="color:var(--accent)">Yellow line</span> — stun path (always 90°)</li>
+            <li><span style="color:var(--blue)">Blue line</span> — draw path</li>
+        </ul>
+
+        <p>By comparing these three lines on different shot angles, you develop an intuitive sense for how much each spin type changes the path. The position module goes further, letting you click a target destination and automatically showing which spin and power combination gets the cue ball closest to that point.</p>
+
+        <h2>Common Mistakes with Separation Angles</h2>
+
+        <h3>Expecting Draw on Thin Cuts</h3>
+        <p>One of the most common errors in position play is attempting to draw the cue ball back on a thin cut shot. As the table above shows, draw at 60° only gives 120° separation, and at 75° it gives only 105°. If you need the cue ball to come back significantly, you need a straighter shot. Recognize when draw is physically impossible given the cut angle, and choose a different route.</p>
+
+        <h3>Ignoring Speed Decay</h3>
+        <p>The separation angle tells you the direction, but the cue ball still needs enough speed to reach your target position along that path. Cloth friction, ball weight, and distance from the object ball all reduce the cue ball's remaining speed after contact. On longer shots, you need to hit harder to send the cue ball the same distance after separation. Our tool's power levels (1-5) model this: distance scales with the square of the power level.</p>
+
+        <h3>Forgetting Rail Bounces</h3>
+        <p>The separation angle is the initial path off the object ball. If that path hits a rail, the cue ball rebounds. Position play often requires planning one or two rail bounces to reach the desired area. The separation angle gets you started; the rail geometry finishes the route. For rail calculations, see our <a href="/guides/kick-shot-guide.html">kick shot guide</a>.</p>
+
+        <h2>Summary</h2>
+
+        <p>Three numbers give you control over cue ball position on any shot:</p>
+        <ol>
+            <li><strong>Cut angle</strong> — determines object ball direction and limits your separation range</li>
+            <li><strong>Spin type</strong> — follow/stun/draw selects which path within that range</li>
+            <li><strong>Power</strong> — controls how far along the chosen path the cue ball travels</li>
+        </ol>
+
+        <p>Learn the 90° stun baseline. Then learn that follow reduces it (down to ~60° on straight shots) and draw increases it (up to ~150°). With these principles and the reference table above, you can predict cue ball paths before you shoot, which is the difference between hoping for position and planning it.</p>
+    </article>
+
+    <footer>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/privacy.html">Privacy</a>
+        <p style="margin-top: 1rem;">&copy; 2026 CueBallPath</p>
+    </footer>
+</body>
+</html>

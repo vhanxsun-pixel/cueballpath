@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond System Calculator - Pool Rail Kick Shot Solver | CueBallPath</title>
+    <meta name="description" content="Learn and calculate kick shots using the diamond system. Our free tool helps you find rail paths, bank angles, and diamond numbers for consistent billiards play.">
+    <link rel="canonical" href="https://cueballpath.com/tools/diamond-system.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07080a;
+            --surface: #101111;
+            --border: #222;
+            --text: #e8e8e8;
+            --muted: #888;
+            --accent: #ffc533;
+            --green: #59d499;
+            --blue: #57c1ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav .brand {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        nav .links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav .links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav .links a:hover {
+            color: var(--text);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text);
+            opacity: 0.92;
+        }
+
+        .intro {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            background-color: var(--accent);
+            color: var(--bg);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border-radius: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .cta-button:hover {
+            opacity: 0.88;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--muted);
+            text-decoration: none;
+            margin: 0 0.75rem;
+        }
+
+        footer a:hover {
+            color: var(--text);
+        }
+
+        footer .copyright {
+            margin-top: 0.75rem;
+        }
+    </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462858695675048" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav>
+        <a href="/" class="brand">CueBallPath</a>
+        <div class="links">
+            <a href="/">Home</a>
+            <a href="/tools/diamond-system.html">Diamond System</a>
+            <a href="/guides/how-to-aim-pool.html">Guides</a>
+            <a href="/about.html">About</a>
+        </div>
+    </nav>
+
+    <main>
+        <h1>Diamond System Calculator</h1>
+        <p class="intro">Calculate kick shots, bank shots, and multi-rail paths using the diamond numbering system. Predict where the cue ball goes after hitting one or more rails.</p>
+
+        <a href="/tool.html" class="cta-button">Launch the Diamond Calculator</a>
+
+        <h2>What is the Diamond System?</h2>
+        <p>The diamond system is a mathematical method for predicting cue ball paths off rails using the diamond markers (or dots) embedded along the cushion of every regulation pool table. These markers divide each rail into equal segments, creating a coordinate grid that players can use to calculate bank shots and kick shots with precision.</p>
+        <p>Rather than relying on feel or guesswork to find a ball after it bounces off a cushion, the diamond system gives you a repeatable formula. You assign numbers to the cue ball's starting position and its target, perform simple arithmetic, and the result tells you exactly which diamond to aim at on the rail.</p>
+        <p>The system was originally developed for three-cushion billiards but has been adapted extensively for pool. In 8-ball and 9-ball, it becomes invaluable for safety play, kick shots when your path to the object ball is blocked, and bank shots where you need the object ball to rebound into a pocket.</p>
+        <p>Professional players use diamond systems as a starting framework and then adjust for variables like speed, english, cloth condition, and rail responsiveness. The system gives you the baseline. Experience fine-tunes the result. Without the baseline, you are guessing. With it, you are making informed adjustments.</p>
+
+        <h2>How Diamond Numbers Work</h2>
+        <p>On a standard pool table, there are three diamonds between each pocket on the long rail and two between each pocket on the short rail. Including the pockets themselves as reference points, this creates a numbering system from 0 to approximately 8 depending on which system you use.</p>
+        <p>The most common numbering for the corner-five system assigns values starting at one corner pocket and counting along the rail. The cue ball's position along the short rail gets one number, and the target point on the long rail gets another. The difference between these two numbers tells you the aim point on the first rail.</p>
+        <p>Different diamond systems use different numbering conventions. The plus-two system, the corner-five system, and the parallel-line system all achieve the same goal through slightly different arithmetic. What matters is consistency: pick one system, memorize its numbers, and train with it until the calculations become automatic.</p>
+        <p>The numbers also shift based on where you stand relative to the rail. A cue ball at the first diamond on the short rail has a different number than one at the second diamond, and each position produces a different natural rebound angle. Our calculator handles these assignments for you, so you can focus on understanding the resulting paths rather than memorizing tables of numbers.</p>
+
+        <h2>Calculating Kick Shots</h2>
+        <p>A kick shot is any shot where the cue ball hits one or more rails before contacting the object ball. These arise constantly in game situations: when an opponent plays safe, when the direct path is blocked by other balls, or when rules require you to hit a rail first.</p>
+        <p>To calculate a one-rail kick shot using the diamond system, you identify your cue ball position number and your target position number. Subtract the target from the cue ball number (or vice versa depending on your system), and the result tells you which diamond on the intervening rail to aim at. The cue ball will rebound off that diamond and travel to your target.</p>
+        <p>Two-rail kicks extend the same logic. After the first rail rebound, you treat the cue ball's new trajectory as a fresh starting point and calculate the second rebound using the same diamond relationships. The arithmetic gets more involved, but the principle remains: known starting number, known ending number, calculate the aim diamond.</p>
+        <p>Speed plays a significant role in kick shots. A firm stroke compresses the rail more deeply, causing the ball to rebound at a slightly shorter angle than the diamonds predict. A soft stroke produces a longer, more open rebound angle. Our calculator shows the baseline path, and you learn to adjust for speed through table practice.</p>
+        <p>English (sidespin) adds another layer. Running english makes the cue ball rebound further down the rail than the natural diamond path. Reverse english shortens the rebound angle. Once you know the natural path from the diamond system, you can deliberately apply english to reach targets that fall between the diamond positions.</p>
+
+        <h2>Common Diamond Patterns</h2>
+        <p>The cross-table kick is the most fundamental diamond pattern. With the cue ball on one long rail, you kick it across to the opposite long rail to contact a ball. The angle of incidence roughly equals the angle of reflection (adjusted for rail compression), making this the easiest kick to visualize and execute.</p>
+        <p>The short-rail kick sends the cue ball into a short rail and back out. These are common in 9-ball when the object ball sits near the side pocket. The short rail is narrower, so your margin for error is smaller, but the diamond system works identically. Assign your numbers, calculate, and aim.</p>
+        <p>The two-rail corner kick is a bread-and-butter safety escape. When your opponent has you buried behind a cluster with the object ball in the open, you can send the cue ball into the long rail, then the short rail (or vice versa), curving around the obstacle. The diamond system makes these paths predictable rather than hopeful.</p>
+        <p>The three-rail kick is the most dramatic and the most satisfying when executed correctly. The cue ball touches three cushions before reaching its target. Professional players use these regularly because at their skill level, the diamond system plus experience makes even three-rail paths reliable enough to play in competition.</p>
+        <p>Practice these patterns individually before combining them. Set up a simple cross-table kick, confirm the diamond calculation works on your specific table, and repeat until the math becomes muscle memory. Then progress to two-rail and three-rail patterns with the same methodical approach.</p>
+
+        <a href="/tool.html" class="cta-button">Try the Interactive Diamond Tool</a>
+    </main>
+
+    <footer>
+        <div>
+            <a href="/about.html">About</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/privacy.html">Privacy</a>
+        </div>
+        <div class="copyright">&copy; 2026 CueBallPath</div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Aiming Calculator - Ghost Ball Method & Cut Angle Tool | CueBallPath</title>
+    <meta name="description" content="Free pool aiming calculator using the ghost ball method. Visualize cut angles, aim points, and pocket paths to improve your billiards accuracy on every shot.">
+    <link rel="canonical" href="https://cueballpath.com/tools/aiming-calculator.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07080a;
+            --surface: #101111;
+            --border: #222;
+            --text: #e8e8e8;
+            --muted: #888;
+            --accent: #ffc533;
+            --green: #59d499;
+            --blue: #57c1ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav .brand {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        nav .links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav .links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav .links a:hover {
+            color: var(--text);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text);
+            opacity: 0.92;
+        }
+
+        .intro {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            background-color: var(--accent);
+            color: var(--bg);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border-radius: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .cta-button:hover {
+            opacity: 0.88;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--muted);
+            text-decoration: none;
+            margin: 0 0.75rem;
+        }
+
+        footer a:hover {
+            color: var(--text);
+        }
+
+        footer .copyright {
+            margin-top: 0.75rem;
+        }
+    </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462858695675048" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav>
+        <a href="/" class="brand">CueBallPath</a>
+        <div class="links">
+            <a href="/">Home</a>
+            <a href="/tools/diamond-system.html">Diamond System</a>
+            <a href="/guides/how-to-aim-pool.html">Guides</a>
+            <a href="/about.html">About</a>
+        </div>
+    </nav>
+
+    <main>
+        <h1>Pool Aiming Calculator</h1>
+        <p class="intro">Visualize ghost ball positions, calculate cut angles, and build consistent aim using our free interactive pool aiming tool.</p>
+
+        <a href="/tool.html" class="cta-button">Launch the Aiming Calculator</a>
+
+        <h2>What is Ghost Ball Aiming?</h2>
+        <p>The ghost ball method is the most widely taught aiming system in billiards. The concept is straightforward: you imagine a "ghost" cue ball sitting in the exact position where it needs to contact the object ball to send it into the pocket. Your job is simply to shoot your real cue ball to the center of that imaginary ghost ball position.</p>
+        <p>This works because when two billiard balls of equal size collide, the object ball travels along the line connecting both ball centers at the moment of impact. By visualizing the ghost ball touching the object ball on the pocket-side, you establish the correct contact line without needing to calculate angles in your head.</p>
+        <p>Most beginners struggle with ghost ball aiming because they aim at the edge of the object ball rather than at the center of the ghost ball position. The distinction is critical. You are not aiming at a point on the object ball. You are aiming your cue ball's center to arrive at a specific point in space, about one ball-width away from the object ball along the pocket line.</p>
+        <p>Our aiming calculator removes the guesswork by showing you exactly where the ghost ball sits for any object ball and pocket combination. You can adjust positions and instantly see how the aim point shifts, building your visual library for real table situations.</p>
+
+        <h2>How Cut Angles Work</h2>
+        <p>A cut angle is the angle between the line from the object ball to the pocket and the line from the cue ball to the object ball at contact. A straight-in shot has a zero-degree cut angle. A shot where you barely clip the edge of the object ball might be a 70-degree cut or higher.</p>
+        <p>Understanding cut angles matters because each angle requires a different aim point on the ghost ball. At zero degrees, you aim directly behind the object ball. As the cut angle increases, your aim point moves further to the side. At 30 degrees, you are aiming roughly at the edge of the object ball. Beyond 45 degrees, shots become progressively thinner and more difficult to execute consistently.</p>
+        <p>The relationship between cut angle and aim point is not linear, which is why players struggle to estimate by feel alone. A 15-degree cut looks almost straight, but a 45-degree cut demands that you aim at what appears to be empty space beside the object ball. This visual disconnect is where most missed shots come from.</p>
+        <p>Our calculator displays the exact cut angle for any shot you set up, helping you connect the visual picture on the table to the underlying geometry. Over time, you internalize these angles and no longer need to calculate. You simply recognize the shot shape and know where to aim.</p>
+
+        <h2>How to Use Our Calculator</h2>
+        <p>Using the CueBallPath aiming calculator takes just seconds. Position the cue ball and object ball anywhere on the virtual table by dragging them. Select your target pocket, and the tool instantly draws the ghost ball position, aim line, and cut angle measurement.</p>
+        <p>You can experiment freely: try the same object ball position from different cue ball angles to see how dramatically the aim point changes. Set up shots you missed in your last session and study the geometry. Rotate around a ball to understand how thin a cut really is versus what you thought at the table.</p>
+        <p>The calculator also shows the full ball path after contact, so you can verify that the object ball will actually reach the pocket and is not obstructed by other geometry. For shots near the rail or at extreme angles, this path preview catches errors that might not be obvious from the aim line alone.</p>
+        <p>Use the tool before practice sessions to pre-load specific shot shapes into your visual memory. Then confirm your reads at the table against what the calculator showed. This feedback loop accelerates your aiming development far faster than grinding shots without structured review.</p>
+
+        <h2>Tips for Better Aim</h2>
+        <p>Consistent aiming starts with a consistent pre-shot routine. Before you get down on the shot, stand directly behind the cue ball looking along the aim line. Find your ghost ball position from this perspective. Only then step into your stance. Rushing this step is the single biggest accuracy killer for intermediate players.</p>
+        <p>Keep your eyes on the object ball's contact point as you deliver the stroke. Many players look back at the cue ball at the last moment, which shifts their alignment. Trust your aim and watch the object ball. Your body follows your eyes, and looking at the target keeps your delivery on line.</p>
+        <p>For thin cuts, use reference points on the table. The diamonds along the rail, spots on the cloth, or even tiny imperfections can serve as landmarks for your aim line. External references are more reliable than trying to hold an imaginary point in space, especially under pressure.</p>
+        <p>Practice with purpose. Rather than shooting random balls, set up the same shot ten times in a row. Adjust your aim point by fractions until you pocket it consistently, then move to a new angle. This deliberate repetition builds the neural pathways that produce automatic, accurate aim in real games.</p>
+        <p>Finally, accept that aiming systems are training wheels. The ghost ball method, fractional aiming, CTE, and other systems all converge on the same physics. They are different ways to find the correct contact point. Use whichever system resonates with you now, and trust that repeated correct execution will eventually become instinctive.</p>
+
+        <a href="/tool.html" class="cta-button">Try the Interactive Aiming Tool</a>
+    </main>
+
+    <footer>
+        <div>
+            <a href="/about.html">About</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/privacy.html">Privacy</a>
+        </div>
+        <div class="copyright">&copy; 2026 CueBallPath</div>
+    </footer>
+</body>
+</html>

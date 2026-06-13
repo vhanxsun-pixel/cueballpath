@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CueBallPath - Free Pool Aiming & Training Tool | 台球瞄准训练工具</title>
+<meta name="description" content="Free interactive billiards training tool with 6 modules: aiming calculator, angle training, spin & deflection, diamond system kick shots, position play, and deviation test. Supports 6 languages.">
+<link rel="canonical" href="https://cueballpath.com/tool.html">
+<meta property="og:title" content="CueBallPath - Pool Aiming & Training Tool">
+<meta property="og:description" content="Interactive billiards tool: aiming, kick shots, spin control, position planning. Free for all pool players.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cueballpath.com/tool.html">
+<meta name="twitter:card" content="summary">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462858695675048" crossorigin="anonymous"></script>
+<style>
+:root {
+  --bg: #0a0a0b;
+  --surface: #111213;
+  --card: #181919;
+  --border: #2a2b2c;
+  --ink: #f0f0f2;
+  --body: #d4d4d6;
+  --mute: #999;
+  --green: #0b6b33;
+  --felt: #0d7a3a;
+  --frame: #1a1208;
+  --yellow: #ffc533;
+  --blue: #57c1ff;
+  --red: #ff5555;
+  --cyan: #59d499;
+  --radius: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  height: 100vh; height: 100dvh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  user-select: none; -webkit-user-select: none;
+}
+#header {
+  display: flex; background: var(--surface);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+#tabs {
+  display: flex; gap: 4px; padding: 10px 12px;
+  overflow-x: auto; flex: 1; min-width: 0;
+  -webkit-mask-image: linear-gradient(to right, #000 88%, transparent);
+  mask-image: linear-gradient(to right, #000 88%, transparent);
+}
+#tabs::-webkit-scrollbar { display: none; }
+.tab-tools {
+  display: flex; gap: 8px; padding: 8px 12px;
+  align-items: center; flex-shrink: 0;
+}
+.tab {
+  padding: 8px 16px; border-radius: var(--radius);
+  background: transparent; border: 1px solid var(--border);
+  color: var(--body); font-size: 14px; cursor: pointer;
+  white-space: nowrap; transition: all .15s;
+}
+.tab:hover { background: var(--card); }
+.tab:active { transform: scale(0.97); }
+.tab.active { background: var(--yellow); color: #000; border-color: var(--yellow); font-weight: 600; }
+#main {
+  flex: 1; display: flex; flex-direction: column;
+  min-height: 0; position: relative;
+}
+#canvasWrap {
+  flex: 1; min-height: 0; display: flex;
+  align-items: center; justify-content: center;
+  padding: 4px;
+}
+canvas { display: block; }
+#panel {
+  flex-shrink: 0; padding: 10px 12px;
+  background: var(--surface); border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px;
+}
+#controls { transition: opacity .12s; }
+#info {
+  display: flex; flex-wrap: wrap; gap: 4px 10px;
+  line-height: 1.4;
+}
+.info-tag { font-size: 12px; color: var(--mute); }
+.info-tag b { color: var(--ink); font-size: 13px; }
+.info-tag.primary b { color: var(--yellow); }
+#controls {
+  display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+}
+.ctrl-group { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.ctrl-group + .ctrl-group { margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--border); }
+.btn {
+  padding: 7px 14px; border-radius: var(--radius);
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--body); font-size: 13px; cursor: pointer;
+  font-family: inherit; transition: all .15s;
+}
+.btn:hover { border-color: var(--yellow); color: var(--ink); }
+.btn:active { transform: scale(0.95); opacity: 0.85; }
+.btn.active { background: var(--yellow); color: #000; border-color: var(--yellow); }
+.btn.warn { border-color: var(--red); color: var(--red); }
+.score { color: var(--yellow); font-weight: 600; font-size: 14px; margin-left: auto; }
+#lang-sel { background: var(--card); border: 1px solid var(--border); color: var(--body); font-size: 12px; padding: 4px 6px; border-radius: var(--radius); cursor: pointer; }
+#lang-sel:focus { outline: none; border-color: var(--yellow); }
+#faq-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); color: var(--yellow); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+#faq-btn:hover { background: var(--yellow); color: #000; }
+#faq { position: fixed; inset: 0; z-index: 999; background: var(--bg); overflow-y: auto; padding: 20px 20px 60px; display: none; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.faq-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: sticky; top: 0; background: var(--bg); padding: 8px 0; z-index: 1; }
+.faq-header h2 { font-size: 20px; color: var(--ink); }
+.faq-close { background: none; border: none; color: var(--mute); font-size: 28px; cursor: pointer; padding: 4px 12px; }
+.faq-close:hover { color: var(--ink); }
+.faq-body section { margin: 20px 0; padding: 16px; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); }
+.faq-body h3 { color: var(--yellow); font-size: 16px; margin-bottom: 10px; }
+.faq-canvas { display: block; width: 100%; max-width: 420px; border-radius: 4px; margin: 10px 0; background: var(--green); }
+.faq-text { color: var(--body); font-size: 13px; line-height: 1.7; }
+.faq-text b { color: var(--ink); }
+.faq-text ul { padding-left: 16px; margin: 4px 0; }
+.faq-text li { margin: 4px 0; }
+.faq-general { padding: 16px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 16px; }
+.faq-general h3 { color: var(--cyan); font-size: 15px; margin-bottom: 8px; }
+@media (min-width: 768px) {
+  #panel { flex-direction: row; align-items: center; }
+  #info { flex: 1; }
+  #controls { flex: 0 0 auto; justify-content: flex-end; }
+  .tab { padding: 10px 20px; font-size: 15px; }
+}
+@media (max-width: 380px) {
+  .tab { padding: 6px 10px; font-size: 12px; }
+  .btn { padding: 5px 10px; font-size: 12px; }
+  .info-tag { font-size: 11px; }
+  .info-tag b { font-size: 12px; }
+  .ctrl-group + .ctrl-group { margin-left: 6px; padding-left: 6px; }
+}
+</style>
+</head>
+<body>
+<div id="faq">
+  <div class="faq-header">
+    <h2 id="faq-title"></h2>
+    <button class="faq-close" onclick="document.getElementById('faq').style.display='none'">&times;</button>
+  </div>
+  <div class="faq-body" id="faq-body"></div>
+</div>
+<div id="header">
+  <div id="tabs">
+    <button class="tab active" data-tab="aim">瞄准</button>
+    <button class="tab" data-tab="train">角度训练</button>
+    <button class="tab" data-tab="hitpoint">打点</button>
+    <button class="tab" data-tab="kick">解球</button>
+    <button class="tab" data-tab="position">走位</button>
+    <button class="tab" data-tab="devtest">偏差测试</button>
+  </div>
+  <div class="tab-tools">
+    <select id="lang-sel" onchange="switchLang(this.value)">
+      <option value="zh">中文</option><option value="en">EN</option><option value="ja">日本語</option>
+      <option value="ko">한국어</option><option value="th">ไทย</option><option value="vi">Tiếng Việt</option>
+    </select>
+    <button id="faq-btn" onclick="document.getElementById('faq').style.display='block';rebuildFaq();drawFaqDiagrams()">?</button>
+  </div>
+</div>
+<div id="main">
+  <div id="canvasWrap"><canvas id="c"></canvas></div>
+</div>
+<div id="panel">
+  <div id="info"></div>
+  <div id="controls"></div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const infoEl = document.getElementById('info');
+const ctrlEl = document.getElementById('controls');
+
+// --- i18n ---
+const LANG = {
+  zh: {
+    tabs: {aim:'瞄准',train:'角度训练',hitpoint:'打点',kick:'解球',position:'走位',devtest:'偏差测试'},
+    btn: {changePocket:'换袋口',grid:'网格',next:'下一题',prev:'上一题',restart:'重新开始',
+      diamond:'颗星',autoKick:'自动解球',addObs:'+障碍球',clearObs:'清除障碍',
+      follow:'高杆',stun:'中杆',draw:'低杆',clearTarget:'清除目标',
+      mixed:'混合',easy:'简单(≤30°)',medium:'中等(30-55°)',hard:'困难(55°+)',retryWorst:'重做最差题'},
+    info: {angle:'角度',dval:'d值',overlap:'重合',thick:'厚薄',distance:'距离',tw:'台宽',bd:'球径',
+      score:'得分',accuracy:'正确率',spin:'打点',power:'力度',cutAngle:'切角',curSep:'当前分离',
+      cue:'母球',target:'目标',hitPt:'打点',mode:'模式',autoMode:'自动解球',routes:'可行路线',
+      routeUnit:'条',allBlocked:'全部被挡',spinMethod:'杆法',dirMatch:'方向吻合',
+      dirSlight:'略有偏差',dirLarge:'偏差较大(需加塞)',clickTarget:'点击球桌设置走位目标',
+      qNum:'第',qUnit:'题',timer:'计时',avgDev:'平均偏差',avgTime:'均时',dir:'方向',
+      biasRight:'偏右',biasLeft:'偏左',biasCenter:'居中',clickGhost:'点击你认为的假想球位置（瞄准点）',
+      devScatter:'偏差散点',diamond:'颗星',railTop:'顶库',railBot:'底库',railLeft:'左库',railRight:'右库'},
+    spin: [['左上','高杆','右上'],['左塞','中杆','右塞'],['左下','低杆','右下']],
+    thick: ['极厚','厚','半厚','半薄','薄','极薄'],
+    kickColors: ['橙=1库','蓝=2库','绿=3库','紫=4库'],
+    power: p => `力${p}`,
+    aimLabels: {ghost:'假想球',overlap:'重合法',tunnel:'管道',hitpt:'撞点',cutline:'切割线'},
+    posLabels: {follow:'高',stun:'定',draw:'低'},
+    faq: {
+      title:'使用帮助',
+      general:{title:'通用操作',items:['<b>拖拽球</b> — 所有模块中可拖拽白色母球和红色目标球调整位置','<b>袋口自动选择</b> — 系统根据角度和距离自动选最优进球袋口','<b>网格线</b> — 点击网格按钮显示/隐藏参考线，帮助估算距离','<b>底部按钮</b> — 切换子模式、杆法、力度等参数','<b>信息栏</b> — 底部实时显示当前角度、参数和计算结果']},
+      aim:{title:'1. 瞄准模块',desc:'<b>功能</b>：展示瞄准辅助线，帮助理解假想球、切角、d值等核心概念。',items:['<b>假想球</b>（绿色半透明圆）— 母球需要到达的位置，使目标球被推向袋口','<b>瞄准线</b>（黄色虚线）— 母球中心到假想球中心的连线','<b>进球线</b>（白色虚线）— 目标球到袋口的连线','<b>切角</b> — 瞄准方向和进球方向的夹角（0°=直球，90°=极薄球）','<b>d值</b> — 2R×cos(切角)，表示母球与目标球的重合距离','<b>重合比例</b> — 1-sin(切角)，从母球后方看到的目标球被遮挡比例，用X/8表示','<b>厚薄</b> — 极厚/厚/半厚/半薄/薄/极薄，对切角的直观描述','<b>距离</b> — 以"台宽"和"球径"双单位显示母球到目标球距离'],sub:'<b>子模式</b>：假想球 / 重合法 / 管道 / 撞点 — 底部按钮切换不同瞄准可视化方式'},
+      train:{title:'2. 角度训练模块',desc:'<b>功能</b>：训练你肉眼估算切角的能力。',items:['系统随机摆球，你从5个角度档位中选择答案','答对加分，答错显示正确角度和假想球位置','多做几轮后，你对角度的感知会越来越准']},
+      hitpoint:{title:'3. 打点模块',desc:'<b>功能</b>：展示不同打点（高/中/低杆）对母球走位方向的影响。',items:['<b>打点球面</b>（右上角可拖拽）— 9宫格选择打点位置','<b>橙红色线 = 高杆方向</b> — 母球跟进，分离角 &lt; 90°','<b>灰色线 = 定杆方向</b> — 母球停走，分离角 = 90°','<b>浅蓝色线 = 低杆方向</b> — 母球回缩，分离角 &gt; 90°','<b>线段长度</b> — 与力度的平方成正比（力度翻倍，走位距离×4）','<b>虚线+圆点</b> — 碰到库边后的反弹路径','<b>分离角公式</b> — 高杆: 90°-30°×cos(切角)，定杆: 90°，低杆: 90°+60°×cos(切角)']},
+      kick:{title:'4. 解球模块',desc:'<b>功能</b>：计算翻库解球路线（当直接进攻被挡时）。',diamondTitle:'<b>颗星模式</b>（教学）：',diamondItems:['只展示1库路线 + 颗星公式计算过程','库边刻度0-8（长边）/ 0-4（短边），用于颗星系统计算'],autoTitle:'<b>自动解球模式</b>（实战）：',autoItems:['<b>橙色 = 1库</b>，<b>蓝色 = 2库</b>，<b>绿色 = 3库</b>，<b>紫色 = 4库</b>','支持添加障碍球，被挡的路线自动跳过','所有路线中选最短且未被阻挡的展示']},
+      position:{title:'5. 走位模块',desc:'<b>功能</b>：规划母球进球后的走位路径，支持设置目标位置反推杆法。',items:['<b>扇形区域</b> — 绿色=高杆可达范围，蓝色=低杆可达范围','<b>点击球桌设置目标</b>（黄色圆圈）→ 系统自动推荐杆法和力度','<b>三色路线</b> — 同时展示高/定/低杆的完整走位路径（含反弹）','<b>橙色线</b> — 从假想球到目标的期望路径','<b>偏差提示</b> — 方向吻合/略有偏差/偏差较大(需加塞)']},
+      devtest:{title:'6. 偏差测试模块',desc:'<b>功能</b>：测试你判断假想球位置的准确度，发现系统性瞄准偏差。',items:['<b>流程</b>：看球位 → 点击你认为的假想球位置 → 显示正确答案和偏差距离(mm)','<b>难度分级</b> — 简单(≤30°) / 中等(30-55°) / 困难(55°+) / 混合','<b>散点图</b>（左下角）— 每个点代表一题的偏差方向和大小','<b>黄点</b> = 当前题，<b>红点</b> = 历史题','<b>计时</b> — 记录每题答题速度，训练快速判断能力','<b>重做最差题</b> — 把偏差最大的题目重新练习','<b>方向统计</b> — 10题后统计你是偏左/偏右/居中倾向']}
+    },
+    canvas: {cueBall:'母球',ghostBall:'假想球',targetBall:'目标球',pocket:'袋口',cutAngle:'切角θ',
+      randomSetup:'系统随机摆球',chooseAngle:'选择你认为的切角',hitPtFace:'打点面',
+      follow:'高杆',stun:'定杆',draw:'低杆',scatter:'散点图',historyDot:'红=历史',currentDot:'黄=当前',
+      flow:'流程：',flowDesc:'看球位 → 点击假想球位置 → 查看偏差',diffLabel:'难度: 简单/中等/困难/混合',
+      after10:'10题后显示偏差方向统计',retryWorst:'支持重做最差题',
+      obs:'障碍球',rail1:'1库(橙)',rail2:'2库(蓝)',target:'目标',followZone:'高杆区',drawZone:'低杆区',
+      posHi:'高',posMid:'定',posLo:'低'}
+  },
+  en: {
+    tabs: {aim:'Aim',train:'Angle Train',hitpoint:'Spin',kick:'Kick Shot',position:'Position',devtest:'Dev Test'},
+    btn: {changePocket:'Pocket',grid:'Grid',next:'Next',prev:'Prev',restart:'Restart',
+      diamond:'Diamond',autoKick:'Auto Kick',addObs:'+Obstacle',clearObs:'Clear',
+      follow:'Follow',stun:'Stun',draw:'Draw',clearTarget:'Clear Target',
+      mixed:'Mixed',easy:'Easy(≤30°)',medium:'Med(30-55°)',hard:'Hard(55°+)',retryWorst:'Retry Worst'},
+    info: {angle:'Angle',dval:'d-val',overlap:'Overlap',thick:'Thickness',distance:'Dist',tw:'TW',bd:'BD',
+      score:'Score',accuracy:'Accuracy',spin:'Spin',power:'Power',cutAngle:'Cut',curSep:'Sep',
+      cue:'Cue',target:'Target',hitPt:'Hit',mode:'Mode',autoMode:'Auto Kick',routes:'Routes',
+      routeUnit:'',allBlocked:'All blocked',spinMethod:'Spin',dirMatch:'On target',
+      dirSlight:'Slight off',dirLarge:'Off (side needed)',clickTarget:'Click table to set target',
+      qNum:'Q',qUnit:'',timer:'Time',avgDev:'Avg dev',avgTime:'Avg time',dir:'Bias',
+      biasRight:'Right',biasLeft:'Left',biasCenter:'Center',clickGhost:'Click where you think the ghost ball is',
+      devScatter:'Scatter',diamond:'Dia',railTop:'Top',railBot:'Bot',railLeft:'Left',railRight:'Right'},
+    spin: [['TL','Follow','TR'],['L-spin','Center','R-spin'],['BL','Draw','BR']],
+    thick: ['Full','¾','½','¼','Thin','Hairline'],
+    kickColors: ['Org=1R','Blue=2R','Grn=3R','Prp=4R'],
+    power: p => `P${p}`,
+    aimLabels: {ghost:'Ghost',overlap:'Overlap',tunnel:'Tunnel',hitpt:'Hit Pt',cutline:'Cut Line'},
+    posLabels: {follow:'F',stun:'S',draw:'D'},
+    faq: {
+      title:'Help',
+      general:{title:'General',items:['<b>Drag balls</b> — drag the white cue ball and red target ball','<b>Auto pocket</b> — system picks the best pocket by angle & distance','<b>Grid</b> — toggle reference grid for distance estimation','<b>Bottom buttons</b> — switch modes, spin, power','<b>Info bar</b> — real-time angle, parameters and results']},
+      aim:{title:'1. Aim Module',desc:'<b>Function</b>: Show aiming aids — ghost ball, cut angle, d-value.',items:['<b>Ghost ball</b> (green) — where cue ball must arrive to pot the object ball','<b>Aim line</b> (yellow dashed) — cue center to ghost center','<b>Pot line</b> (white dashed) — object ball to pocket','<b>Cut angle</b> — angle between aim and pot direction (0°=straight, 90°=extreme thin)','<b>d-value</b> — 2R×cos(cut), overlap distance','<b>Overlap ratio</b> — 1-sin(cut), shown as X/8','<b>Thickness</b> — Full/¾/½/¼/Thin/Hairline','<b>Distance</b> — in table-widths and ball-diameters'],sub:'<b>Sub-modes</b>: Ghost / Overlap / Tunnel / Hit Point — switch via bottom buttons'},
+      train:{title:'2. Angle Training',desc:'<b>Function</b>: Train your ability to estimate cut angles.',items:['Random ball placement, choose from 5 angle ranges','Correct = points, wrong = shows correct angle & ghost','Practice improves your angle perception']},
+      hitpoint:{title:'3. Spin Module',desc:'<b>Function</b>: Show how spin affects cue ball direction after contact.',items:['<b>Spin view</b> (top-right, draggable) — 9-point grid','<b>Orange line = Follow</b> — cue follows, separation < 90°','<b>Gray line = Stun</b> — cue stops, separation = 90°','<b>Blue line = Draw</b> — cue draws back, separation > 90°','<b>Line length</b> — proportional to power² (2× power = 4× distance)','<b>Dashed + dots</b> — bounce path after cushion','<b>Separation formula</b> — Follow: 90°-30°×cos(cut), Stun: 90°, Draw: 90°+60°×cos(cut)']},
+      kick:{title:'4. Kick Shot Module',desc:'<b>Function</b>: Calculate kick/bank routes when direct shot is blocked.',diamondTitle:'<b>Diamond mode</b> (learning):',diamondItems:['Shows 1-rail route + diamond system formula','Rail scale 0-8 (long) / 0-4 (short)'],autoTitle:'<b>Auto Kick mode</b> (practical):',autoItems:['<b>Orange=1 rail</b>, <b>Blue=2 rails</b>, <b>Green=3 rails</b>, <b>Purple=4 rails</b>','Add obstacle balls — blocked routes auto-skip','Shows shortest unblocked route']},
+      position:{title:'5. Position Module',desc:'<b>Function</b>: Plan cue ball position after potting, with target recommendation.',items:['<b>Fan zone</b> — green=follow range, blue=draw range','<b>Click table to set target</b> (yellow circle) → auto-recommend spin & power','<b>Three lines</b> — follow/stun/draw paths with bounces','<b>Orange line</b> — desired path to target','<b>Deviation hint</b> — on target / slight off / off (side needed)']},
+      devtest:{title:'6. Deviation Test',desc:'<b>Function</b>: Test your ghost ball accuracy, find systematic bias.',items:['<b>Flow</b>: See layout → click ghost position → see result & deviation (mm)','<b>Difficulty</b> — Easy(≤30°) / Medium(30-55°) / Hard(55°+) / Mixed','<b>Scatter plot</b> (bottom-left) — each dot = one answer\'s deviation','<b>Yellow dot</b> = current, <b>Red dot</b> = history','<b>Timer</b> — tracks answer speed','<b>Retry worst</b> — redo your worst attempts','<b>Bias stats</b> — after 10 questions shows left/right/center tendency']}
+    },
+    canvas: {cueBall:'Cue',ghostBall:'Ghost',targetBall:'Target',pocket:'Pocket',cutAngle:'Cut θ',
+      randomSetup:'Random layout',chooseAngle:'Pick the cut angle',hitPtFace:'Spin view',
+      follow:'Follow',stun:'Stun',draw:'Draw',scatter:'Scatter',historyDot:'Red=history',currentDot:'Yel=current',
+      flow:'Flow:',flowDesc:'See → Click ghost → Check deviation',diffLabel:'Diff: Easy/Med/Hard/Mixed',
+      after10:'Bias stats after 10 Qs',retryWorst:'Retry worst available',
+      obs:'Obstacle',rail1:'1R(org)',rail2:'2R(blue)',target:'Target',followZone:'Follow',drawZone:'Draw',
+      posHi:'F',posMid:'S',posLo:'D'}
+  },
+  ja: {
+    tabs: {aim:'エイム',train:'角度練習',hitpoint:'撞点',kick:'バンク',position:'ポジション',devtest:'精度テスト'},
+    btn: {changePocket:'ポケット',grid:'グリッド',next:'次へ',prev:'前へ',restart:'やり直し',
+      diamond:'ダイヤモンド',autoKick:'自動バンク',addObs:'+障害球',clearObs:'クリア',
+      follow:'押し',stun:'ストップ',draw:'引き',clearTarget:'目標クリア',
+      mixed:'ミックス',easy:'易(≤30°)',medium:'中(30-55°)',hard:'難(55°+)',retryWorst:'最悪リトライ'},
+    info: {angle:'角度',dval:'d値',overlap:'重なり',thick:'厚さ',distance:'距離',tw:'台幅',bd:'球径',
+      score:'得点',accuracy:'正解率',spin:'撞点',power:'力',cutAngle:'カット角',curSep:'分離角',
+      cue:'手球',target:'的球',hitPt:'撞点',mode:'モード',autoMode:'自動バンク',routes:'経路',
+      routeUnit:'本',allBlocked:'全てブロック',spinMethod:'撞点',dirMatch:'方向一致',
+      dirSlight:'やや偏差',dirLarge:'偏差大(ひねり要)',clickTarget:'テーブルをクリックして目標設定',
+      qNum:'第',qUnit:'問',timer:'時間',avgDev:'平均偏差',avgTime:'平均時間',dir:'方向',
+      biasRight:'右偏り',biasLeft:'左偏り',biasCenter:'中央',clickGhost:'ゴーストボールの位置をクリック',
+      devScatter:'散布図',diamond:'ダイヤ',railTop:'上',railBot:'下',railLeft:'左',railRight:'右'},
+    spin: [['左上','押し','右上'],['左ひねり','センター','右ひねり'],['左下','引き','右下']],
+    thick: ['極厚','厚','半厚','半薄','薄','極薄'],
+    kickColors: ['橙=1庫','青=2庫','緑=3庫','紫=4庫'],
+    power: p => `力${p}`,
+    aimLabels: {ghost:'ゴースト',overlap:'重なり法',tunnel:'トンネル',hitpt:'撞点',cutline:'カット線'},
+    posLabels: {follow:'押',stun:'止',draw:'引'},
+    faq: {
+      title:'ヘルプ',
+      general:{title:'基本操作',items:['<b>ボールドラッグ</b> — 手球(白)と的球(赤)をドラッグして配置','<b>ポケット自動選択</b> — 角度と距離から最適ポケットを自動選択','<b>グリッド</b> — 参照グリッドの表示/非表示','<b>下部ボタン</b> — モード、撞点、力の切替','<b>情報バー</b> — リアルタイムで角度・パラメータを表示']},
+      aim:{title:'1. エイムモジュール',desc:'<b>機能</b>：エイム補助線を表示し、ゴーストボール・カット角・d値を理解。',items:['<b>ゴーストボール</b>(緑) — 手球がここに到達すれば的球がポケットへ','<b>エイムライン</b>(黄点線) — 手球中心からゴースト中心','<b>ポットライン</b>(白点線) — 的球からポケット','<b>カット角</b> — エイム方向とポット方向の角度(0°=直球, 90°=極薄)','<b>d値</b> — 2R×cos(カット角)、重なり距離','<b>重なり比</b> — 1-sin(カット角)、X/8で表示','<b>厚さ</b> — 極厚/厚/半厚/半薄/薄/極薄','<b>距離</b> — 台幅・球径で表示'],sub:'<b>サブモード</b>：ゴースト / 重なり法 / トンネル / 撞点'},
+      train:{title:'2. 角度練習',desc:'<b>機能</b>：カット角を目測する能力を訓練。',items:['ランダム配置から5つの角度範囲を選択','正解で加点、不正解で正しい角度とゴーストを表示','繰り返しで角度感覚が向上']},
+      hitpoint:{title:'3. 撞点モジュール',desc:'<b>機能</b>：撞点(押し/止め/引き)が手球方向に与える影響を表示。',items:['<b>撞点ビュー</b>(右上、ドラッグ可) — 9点グリッド','<b>オレンジ線 = 押し方向</b> — 手球が追従、分離角 < 90°','<b>グレー線 = ストップ方向</b> — 手球停止、分離角 = 90°','<b>青線 = 引き方向</b> — 手球後退、分離角 > 90°','<b>線の長さ</b> — 力の二乗に比例(2倍の力 = 4倍の距離)','<b>点線+ドット</b> — クッション後の反射経路','<b>分離角公式</b> — 押し: 90°-30°×cos(角), 止め: 90°, 引き: 90°+60°×cos(角)']},
+      kick:{title:'4. バンクショット',desc:'<b>機能</b>：直接ショットがブロックされた時のバンク経路を計算。',diamondTitle:'<b>ダイヤモンドモード</b>(学習)：',diamondItems:['1庫経路 + ダイヤモンドシステム計算を表示','レール目盛り0-8(長辺) / 0-4(短辺)'],autoTitle:'<b>自動バンクモード</b>(実戦)：',autoItems:['<b>橙=1庫</b>、<b>青=2庫</b>、<b>緑=3庫</b>、<b>紫=4庫</b>','障害球を追加可能、ブロック経路は自動スキップ','最短で未ブロックの経路を表示']},
+      position:{title:'5. ポジションモジュール',desc:'<b>機能</b>：ポット後の手球ポジションを計画、目標から撞点を逆算。',items:['<b>扇形エリア</b> — 緑=押し範囲、青=引き範囲','<b>テーブルクリックで目標設定</b>(黄円) → 撞点と力を自動推奨','<b>3色ライン</b> — 押し/止め/引きの完全経路(反射含む)','<b>オレンジ線</b> — ゴーストから目標への期待経路','<b>偏差ヒント</b> — 方向一致/やや偏差/偏差大(ひねり要)']},
+      devtest:{title:'6. 精度テスト',desc:'<b>機能</b>：ゴーストボール位置の判断精度をテスト、系統的偏差を発見。',items:['<b>フロー</b>：球配置を見る → ゴースト位置をクリック → 偏差(mm)を確認','<b>難易度</b> — 易(≤30°) / 中(30-55°) / 難(55°+) / ミックス','<b>散布図</b>(左下) — 各点が偏差方向と大きさ','<b>黄点</b> = 現在の問題、<b>赤点</b> = 過去','<b>タイマー</b> — 回答速度を記録','<b>最悪リトライ</b> — 偏差最大の問題を再練習','<b>方向統計</b> — 10問後に左偏り/右偏り/中央の傾向を表示']}
+    },
+    canvas: {cueBall:'手球',ghostBall:'ゴースト',targetBall:'的球',pocket:'ポケット',cutAngle:'カット角θ',
+      randomSetup:'ランダム配置',chooseAngle:'カット角を選択',hitPtFace:'撞点面',
+      follow:'押し',stun:'ストップ',draw:'引き',scatter:'散布図',historyDot:'赤=過去',currentDot:'黄=現在',
+      flow:'フロー：',flowDesc:'見る→クリック→偏差確認',diffLabel:'難易度: 易/中/難/ミックス',
+      after10:'10問後に方向統計',retryWorst:'最悪リトライ可能',
+      obs:'障害球',rail1:'1庫(橙)',rail2:'2庫(青)',target:'目標',followZone:'押し',drawZone:'引き',
+      posHi:'押',posMid:'止',posLo:'引'}
+  },
+  ko: {
+    tabs: {aim:'조준',train:'각도훈련',hitpoint:'당점',kick:'뱅크샷',position:'포지션',devtest:'편차테스트'},
+    btn: {changePocket:'포켓',grid:'그리드',next:'다음',prev:'이전',restart:'다시시작',
+      diamond:'다이아몬드',autoKick:'자동뱅크',addObs:'+장애물',clearObs:'제거',
+      follow:'밀어치기',stun:'스톱',draw:'끌어치기',clearTarget:'목표제거',
+      mixed:'혼합',easy:'쉬움(≤30°)',medium:'보통(30-55°)',hard:'어려움(55°+)',retryWorst:'최악재시도'},
+    info: {angle:'각도',dval:'d값',overlap:'겹침',thick:'두께',distance:'거리',tw:'대폭',bd:'구경',
+      score:'점수',accuracy:'정확도',spin:'당점',power:'파워',cutAngle:'커트각',curSep:'분리각',
+      cue:'수구',target:'목적구',hitPt:'당점',mode:'모드',autoMode:'자동뱅크',routes:'경로',
+      routeUnit:'개',allBlocked:'모두차단',spinMethod:'당점',dirMatch:'방향일치',
+      dirSlight:'약간편차',dirLarge:'편차큼(회전필요)',clickTarget:'테이블을 클릭하여 목표설정',
+      qNum:'제',qUnit:'문',timer:'시간',avgDev:'평균편차',avgTime:'평균시간',dir:'방향',
+      biasRight:'오른쪽',biasLeft:'왼쪽',biasCenter:'중앙',clickGhost:'고스트볼 위치를 클릭하세요',
+      devScatter:'산점도',diamond:'다이아',railTop:'상단',railBot:'하단',railLeft:'좌측',railRight:'우측'},
+    spin: [['좌상','밀어치기','우상'],['좌회전','중앙','우회전'],['좌하','끌어치기','우하']],
+    thick: ['극후','후','반후','반박','박','극박'],
+    kickColors: ['주황=1쿠션','파랑=2쿠션','초록=3쿠션','보라=4쿠션'],
+    power: p => `P${p}`,
+    aimLabels: {ghost:'고스트',overlap:'겹침법',tunnel:'터널',hitpt:'당점',cutline:'커트선'},
+    posLabels: {follow:'밀',stun:'스',draw:'끌'},
+    faq: {
+      title:'도움말',
+      general:{title:'기본조작',items:['<b>공드래그</b> — 수구(흰)와 목적구(빨강)를 드래그하여 배치','<b>포켓자동선택</b> — 각도와 거리로 최적포켓 자동선택','<b>그리드</b> — 참조격자 표시/숨기기','<b>하단버튼</b> — 모드, 당점, 파워 전환','<b>정보바</b> — 실시간 각도, 파라미터 표시']},
+      aim:{title:'1. 조준모듈',desc:'<b>기능</b>: 조준보조선을 표시하여 고스트볼, 커트각, d값을 이해.',items:['<b>고스트볼</b>(초록) — 수구가 도달해야 할 위치','<b>조준선</b>(노란점선) — 수구중심에서 고스트중심','<b>포팅선</b>(흰점선) — 목적구에서 포켓','<b>커트각</b> — 조준방향과 포팅방향의 각도(0°=직구, 90°=극박)','<b>d값</b> — 2R×cos(커트각), 겹침거리','<b>겹침비</b> — 1-sin(커트각), X/8로 표시','<b>두께</b> — 극후/후/반후/반박/박/극박','<b>거리</b> — 대폭·구경 단위로 표시'],sub:'<b>서브모드</b>: 고스트 / 겹침법 / 터널 / 당점'},
+      train:{title:'2. 각도훈련',desc:'<b>기능</b>: 커트각을 눈으로 추정하는 능력을 훈련.',items:['랜덤배치에서 5개 각도범위 선택','정답시 가점, 오답시 정답과 고스트 표시','반복하면 각도감각 향상']},
+      hitpoint:{title:'3. 당점모듈',desc:'<b>기능</b>: 당점(밀어/스톱/끌어)이 수구방향에 미치는 영향 표시.',items:['<b>당점뷰</b>(우상단, 드래그가능) — 9포인트 그리드','<b>주황선 = 밀어치기</b> — 수구따라감, 분리각 < 90°','<b>회색선 = 스톱</b> — 수구정지, 분리각 = 90°','<b>파란선 = 끌어치기</b> — 수구후퇴, 분리각 > 90°','<b>선길이</b> — 파워²에 비례(2배파워 = 4배거리)','<b>점선+점</b> — 쿠션반사 경로','<b>분리각공식</b> — 밀어: 90°-30°×cos(각), 스톱: 90°, 끌어: 90°+60°×cos(각)']},
+      kick:{title:'4. 뱅크샷',desc:'<b>기능</b>: 직접샷이 차단될 때 뱅크경로를 계산.',diamondTitle:'<b>다이아몬드모드</b>(학습):',diamondItems:['1쿠션경로 + 다이아몬드시스템 계산표시','레일눈금 0-8(장변) / 0-4(단변)'],autoTitle:'<b>자동뱅크모드</b>(실전):',autoItems:['<b>주황=1쿠션</b>, <b>파랑=2쿠션</b>, <b>초록=3쿠션</b>, <b>보라=4쿠션</b>','장애물공 추가가능, 차단경로 자동스킵','최단미차단 경로 표시']},
+      position:{title:'5. 포지션모듈',desc:'<b>기능</b>: 포팅후 수구포지션을 계획, 목표에서 당점을 역산.',items:['<b>부채영역</b> — 초록=밀어범위, 파랑=끌어범위','<b>테이블클릭으로 목표설정</b>(노란원) → 당점과 파워 자동추천','<b>3색경로</b> — 밀어/스톱/끌어의 완전경로(반사포함)','<b>주황선</b> — 고스트에서 목표로의 기대경로','<b>편차힌트</b> — 방향일치/약간편차/편차큼(회전필요)']},
+      devtest:{title:'6. 편차테스트',desc:'<b>기능</b>: 고스트볼 위치판단 정확도 테스트, 체계적 편차 발견.',items:['<b>흐름</b>: 배치확인 → 고스트위치클릭 → 편차(mm)확인','<b>난이도</b> — 쉬움(≤30°) / 보통(30-55°) / 어려움(55°+) / 혼합','<b>산점도</b>(좌하단) — 각점은 편차방향과 크기','<b>노란점</b> = 현재, <b>빨간점</b> = 이전','<b>타이머</b> — 답변속도 기록','<b>최악재시도</b> — 편차최대 문제 재연습','<b>방향통계</b> — 10문후 좌/우/중앙 경향 표시']}
+    },
+    canvas: {cueBall:'수구',ghostBall:'고스트',targetBall:'목적구',pocket:'포켓',cutAngle:'커트각θ',
+      randomSetup:'랜덤배치',chooseAngle:'커트각을 선택',hitPtFace:'당점면',
+      follow:'밀어',stun:'스톱',draw:'끌어',scatter:'산점도',historyDot:'빨강=이전',currentDot:'노랑=현재',
+      flow:'흐름:',flowDesc:'보기→클릭→편차확인',diffLabel:'난이도: 쉬움/보통/어려움/혼합',
+      after10:'10문후 방향통계',retryWorst:'최악재시도 가능',
+      obs:'장애물',rail1:'1쿠션(주황)',rail2:'2쿠션(파랑)',target:'목표',followZone:'밀어',drawZone:'끌어',
+      posHi:'밀',posMid:'스',posLo:'끌'}
+  },
+  th: {
+    tabs: {aim:'เล็ง',train:'ฝึกมุม',hitpoint:'จุดแทง',kick:'แบงค์',position:'ตำแหน่ง',devtest:'ทดสอบ'},
+    btn: {changePocket:'หลุม',grid:'ตาราง',next:'ถัดไป',prev:'ก่อนหน้า',restart:'เริ่มใหม่',
+      diamond:'ไดมอนด์',autoKick:'อัตโนมัติ',addObs:'+อุปสรรค',clearObs:'ล้าง',
+      follow:'ตีบน',stun:'ตีกลาง',draw:'ตีล่าง',clearTarget:'ล้างเป้า',
+      mixed:'ผสม',easy:'ง่าย(≤30°)',medium:'กลาง(30-55°)',hard:'ยาก(55°+)',retryWorst:'ทำซ้ำ'},
+    info: {angle:'มุม',dval:'d',overlap:'ซ้อน',thick:'ความหนา',distance:'ระยะ',tw:'กว้าง',bd:'ลูก',
+      score:'คะแนน',accuracy:'แม่นยำ',spin:'จุดแทง',power:'แรง',cutAngle:'มุมตัด',curSep:'แยก',
+      cue:'ลูกคิว',target:'เป้า',hitPt:'จุด',mode:'โหมด',autoMode:'อัตโนมัติ',routes:'เส้นทาง',
+      routeUnit:'',allBlocked:'ถูกบล็อก',spinMethod:'จุดแทง',dirMatch:'ตรงเป้า',
+      dirSlight:'เบี่ยงเล็กน้อย',dirLarge:'เบี่ยงมาก(ต้องหมุน)',clickTarget:'คลิกโต๊ะเพื่อตั้งเป้า',
+      qNum:'ข้อ',qUnit:'',timer:'เวลา',avgDev:'เบี่ยงเฉลี่ย',avgTime:'เวลาเฉลี่ย',dir:'ทิศ',
+      biasRight:'ขวา',biasLeft:'ซ้าย',biasCenter:'กลาง',clickGhost:'คลิกตำแหน่งลูกผี',
+      devScatter:'กราฟ',diamond:'ไดมอนด์',railTop:'บน',railBot:'ล่าง',railLeft:'ซ้าย',railRight:'ขวา'},
+    spin: [['ซ้ายบน','ตีบน','ขวาบน'],['หมุนซ้าย','กลาง','หมุนขวา'],['ซ้ายล่าง','ตีล่าง','ขวาล่าง']],
+    thick: ['หนามาก','หนา','ครึ่งหนา','ครึ่งบาง','บาง','บางมาก'],
+    kickColors: ['ส้ม=1แบงค์','น้ำเงิน=2แบงค์','เขียว=3แบงค์','ม่วง=4แบงค์'],
+    power: p => `P${p}`,
+    aimLabels: {ghost:'ลูกผี',overlap:'ซ้อน',tunnel:'อุโมงค์',hitpt:'จุดแทง',cutline:'เส้นตัด'},
+    posLabels: {follow:'บน',stun:'กลาง',draw:'ล่าง'},
+    faq: {
+      title:'วิธีใช้',
+      general:{title:'การใช้งานทั่วไป',items:['<b>ลากลูก</b> — ลากลูกคิว(ขาว)และลูกเป้า(แดง)','<b>เลือกหลุมอัตโนมัติ</b> — ระบบเลือกหลุมที่ดีที่สุด','<b>ตาราง</b> — แสดง/ซ่อนเส้นอ้างอิง','<b>ปุ่มด้านล่าง</b> — สลับโหมด, จุดแทง, แรง','<b>แถบข้อมูล</b> — แสดงมุมและพารามิเตอร์แบบเรียลไทม์']},
+      aim:{title:'1. โมดูลเล็ง',desc:'<b>ฟังก์ชัน</b>: แสดงเส้นช่วยเล็ง — ลูกผี, มุมตัด, ค่า d',items:['<b>ลูกผี</b>(เขียว) — ตำแหน่งที่ลูกคิวต้องไปถึง','<b>เส้นเล็ง</b>(เหลืองประ) — ศูนย์กลางคิวถึงศูนย์กลางลูกผี','<b>เส้นลง</b>(ขาวประ) — ลูกเป้าถึงหลุม','<b>มุมตัด</b> — มุมระหว่างทิศเล็งและทิศลง(0°=ตรง, 90°=บางสุด)','<b>ค่า d</b> — 2R×cos(มุมตัด)','<b>อัตราซ้อน</b> — 1-sin(มุมตัด), แสดงเป็น X/8','<b>ความหนา</b> — หนามาก/หนา/ครึ่งหนา/ครึ่งบาง/บาง/บางมาก','<b>ระยะ</b> — หน่วยความกว้างโต๊ะและเส้นผ่านศูนย์กลางลูก'],sub:'<b>โหมดย่อย</b>: ลูกผี / ซ้อน / อุโมงค์ / จุดแทง'},
+      train:{title:'2. ฝึกมุม',desc:'<b>ฟังก์ชัน</b>: ฝึกการประมาณมุมตัดด้วยตา',items:['วางลูกแบบสุ่ม เลือกจาก 5 ช่วงมุม','ถูก=ได้คะแนน, ผิด=แสดงมุมที่ถูกต้อง','ฝึกบ่อยๆ จะแม่นขึ้น']},
+      hitpoint:{title:'3. จุดแทง',desc:'<b>ฟังก์ชัน</b>: แสดงผลของจุดแทง(บน/กลาง/ล่าง)ต่อทิศทางลูกคิว',items:['<b>มุมมองจุดแทง</b>(ขวาบน, ลากได้) — ตาราง 9 จุด','<b>เส้นส้ม = ตีบน</b> — ลูกคิวตามไป, มุมแยก < 90°','<b>เส้นเทา = ตีกลาง</b> — ลูกคิวหยุด, มุมแยก = 90°','<b>เส้นฟ้า = ตีล่าง</b> — ลูกคิวถอยกลับ, มุมแยก > 90°','<b>ความยาวเส้น</b> — แปรผันตามแรง²','<b>เส้นประ+จุด</b> — เส้นทางสะท้อนหลังชนแบงค์','<b>สูตรมุมแยก</b> — บน: 90°-30°×cos(มุม), กลาง: 90°, ล่าง: 90°+60°×cos(มุม)']},
+      kick:{title:'4. แบงค์ช็อต',desc:'<b>ฟังก์ชัน</b>: คำนวณเส้นทางแบงค์เมื่อถูกบล็อก',diamondTitle:'<b>โหมดไดมอนด์</b>(เรียนรู้):',diamondItems:['แสดงเส้นทาง 1 แบงค์ + สูตรไดมอนด์','สเกลขอบ 0-8(ด้านยาว) / 0-4(ด้านสั้น)'],autoTitle:'<b>โหมดอัตโนมัติ</b>(ใช้จริง):',autoItems:['<b>ส้ม=1แบงค์</b>, <b>น้ำเงิน=2แบงค์</b>, <b>เขียว=3แบงค์</b>, <b>ม่วง=4แบงค์</b>','เพิ่มลูกอุปสรรคได้ เส้นที่ถูกบล็อกข้ามอัตโนมัติ','แสดงเส้นทางสั้นที่สุดที่ไม่ถูกบล็อก']},
+      position:{title:'5. ตำแหน่ง',desc:'<b>ฟังก์ชัน</b>: วางแผนตำแหน่งลูกคิวหลังลง, ตั้งเป้าแนะนำจุดแทง',items:['<b>พื้นที่พัด</b> — เขียว=ช่วงตีบน, ฟ้า=ช่วงตีล่าง','<b>คลิกโต๊ะตั้งเป้า</b>(วงเหลือง) → แนะนำจุดแทงและแรงอัตโนมัติ','<b>3 เส้นสี</b> — เส้นทางบน/กลาง/ล่าง(รวมสะท้อน)','<b>เส้นส้ม</b> — เส้นทางที่ต้องการไปเป้า','<b>คำแนะนำ</b> — ตรงเป้า/เบี่ยงเล็กน้อย/เบี่ยงมาก']},
+      devtest:{title:'6. ทดสอบความแม่นยำ',desc:'<b>ฟังก์ชัน</b>: ทดสอบความแม่นยำในการหาลูกผี',items:['<b>ขั้นตอน</b>: ดูตำแหน่ง → คลิกตำแหน่งลูกผี → ดูผลเบี่ยงเบน(mm)','<b>ระดับความยาก</b> — ง่าย(≤30°) / กลาง(30-55°) / ยาก(55°+) / ผสม','<b>กราฟจุด</b>(ซ้ายล่าง) — แต่ละจุดแสดงทิศและขนาดเบี่ยงเบน','<b>จุดเหลือง</b> = ข้อปัจจุบัน, <b>จุดแดง</b> = ประวัติ','<b>จับเวลา</b> — บันทึกความเร็วในการตอบ','<b>ทำซ้ำข้อแย่สุด</b> — ฝึกข้อที่เบี่ยงเบนมากที่สุด','<b>สถิติทิศ</b> — หลัง 10 ข้อแสดงแนวโน้มซ้าย/ขวา/กลาง']}
+    },
+    canvas: {cueBall:'คิว',ghostBall:'ลูกผี',targetBall:'เป้า',pocket:'หลุม',cutAngle:'มุมตัดθ',
+      randomSetup:'สุ่มวางลูก',chooseAngle:'เลือกมุมตัด',hitPtFace:'มุมมองจุดแทง',
+      follow:'ตีบน',stun:'ตีกลาง',draw:'ตีล่าง',scatter:'กราฟจุด',historyDot:'แดง=ประวัติ',currentDot:'เหลือง=ปัจจุบัน',
+      flow:'ขั้นตอน:',flowDesc:'ดู→คลิก→ดูเบี่ยงเบน',diffLabel:'ระดับ: ง่าย/กลาง/ยาก/ผสม',
+      after10:'10ข้อแล้วแสดงสถิติ',retryWorst:'ทำซ้ำข้อแย่ได้',
+      obs:'อุปสรรค',rail1:'1แบงค์(ส้ม)',rail2:'2แบงค์(น้ำเงิน)',target:'เป้า',followZone:'ตีบน',drawZone:'ตีล่าง',
+      posHi:'บน',posMid:'กลาง',posLo:'ล่าง'}
+  },
+  vi: {
+    tabs: {aim:'Ngắm',train:'Luyện góc',hitpoint:'Điểm đánh',kick:'Bank shot',position:'Vị trí',devtest:'Test sai số'},
+    btn: {changePocket:'Lỗ',grid:'Lưới',next:'Tiếp',prev:'Trước',restart:'Làm lại',
+      diamond:'Diamond',autoKick:'Tự động',addObs:'+Chướng ngại',clearObs:'Xóa',
+      follow:'Cao',stun:'Dừng',draw:'Kéo',clearTarget:'Xóa mục tiêu',
+      mixed:'Hỗn hợp',easy:'Dễ(≤30°)',medium:'TB(30-55°)',hard:'Khó(55°+)',retryWorst:'Thử lại'},
+    info: {angle:'Góc',dval:'d',overlap:'Chồng',thick:'Dày/mỏng',distance:'Khoảng cách',tw:'rộng bàn',bd:'đường kính',
+      score:'Điểm',accuracy:'Chính xác',spin:'Điểm đánh',power:'Lực',cutAngle:'Góc cắt',curSep:'Tách',
+      cue:'Bi trắng',target:'Bi đích',hitPt:'Điểm',mode:'Chế độ',autoMode:'Tự động',routes:'Đường',
+      routeUnit:'',allBlocked:'Tất cả bị chặn',spinMethod:'Điểm đánh',dirMatch:'Đúng hướng',
+      dirSlight:'Lệch nhẹ',dirLarge:'Lệch nhiều(cần xoáy)',clickTarget:'Click bàn để đặt mục tiêu',
+      qNum:'Câu',qUnit:'',timer:'Thời gian',avgDev:'Sai số TB',avgTime:'Thời gian TB',dir:'Hướng',
+      biasRight:'Phải',biasLeft:'Trái',biasCenter:'Giữa',clickGhost:'Click vị trí bi ảo',
+      devScatter:'Biểu đồ',diamond:'Diamond',railTop:'Trên',railBot:'Dưới',railLeft:'Trái',railRight:'Phải'},
+    spin: [['Trái trên','Cao','Phải trên'],['Xoáy trái','Giữa','Xoáy phải'],['Trái dưới','Kéo','Phải dưới']],
+    thick: ['Rất dày','Dày','Nửa dày','Nửa mỏng','Mỏng','Rất mỏng'],
+    kickColors: ['Cam=1bank','Xanh=2bank','Lục=3bank','Tím=4bank'],
+    power: p => `L${p}`,
+    aimLabels: {ghost:'Bi ảo',overlap:'Chồng',tunnel:'Đường hầm',hitpt:'Điểm đánh',cutline:'Đường cắt'},
+    posLabels: {follow:'Cao',stun:'Dừng',draw:'Kéo'},
+    faq: {
+      title:'Hướng dẫn',
+      general:{title:'Thao tác chung',items:['<b>Kéo bi</b> — kéo bi trắng và bi đỏ để đặt vị trí','<b>Tự chọn lỗ</b> — hệ thống chọn lỗ tối ưu','<b>Lưới</b> — hiện/ẩn lưới tham chiếu','<b>Nút dưới</b> — chuyển chế độ, điểm đánh, lực','<b>Thanh thông tin</b> — hiển thị góc và thông số thời gian thực']},
+      aim:{title:'1. Module Ngắm',desc:'<b>Chức năng</b>: Hiển thị đường hỗ trợ ngắm — bi ảo, góc cắt, giá trị d.',items:['<b>Bi ảo</b>(xanh) — vị trí bi trắng cần đến','<b>Đường ngắm</b>(vàng nét đứt) — tâm bi trắng đến tâm bi ảo','<b>Đường vào lỗ</b>(trắng nét đứt) — bi đích đến lỗ','<b>Góc cắt</b> — góc giữa hướng ngắm và hướng vào lỗ','<b>Giá trị d</b> — 2R×cos(góc cắt)','<b>Tỷ lệ chồng</b> — 1-sin(góc cắt), hiển thị X/8','<b>Dày/mỏng</b> — từ rất dày đến rất mỏng','<b>Khoảng cách</b> — đơn vị rộng bàn và đường kính bi'],sub:'<b>Chế độ phụ</b>: Bi ảo / Chồng / Đường hầm / Điểm đánh'},
+      train:{title:'2. Luyện góc',desc:'<b>Chức năng</b>: Luyện khả năng ước lượng góc cắt bằng mắt.',items:['Đặt bi ngẫu nhiên, chọn từ 5 khoảng góc','Đúng=điểm, sai=hiện góc đúng và bi ảo','Luyện nhiều sẽ cải thiện cảm nhận góc']},
+      hitpoint:{title:'3. Điểm đánh',desc:'<b>Chức năng</b>: Hiển thị ảnh hưởng của điểm đánh đến hướng bi trắng.',items:['<b>Góc nhìn điểm đánh</b>(góc trên phải, kéo được) — lưới 9 điểm','<b>Đường cam = Đánh cao</b> — bi trắng chạy theo, góc tách < 90°','<b>Đường xám = Dừng</b> — bi trắng dừng, góc tách = 90°','<b>Đường xanh = Kéo</b> — bi trắng lùi lại, góc tách > 90°','<b>Độ dài đường</b> — tỷ lệ với lực²','<b>Nét đứt+chấm</b> — đường phản xạ sau khi chạm band','<b>Công thức góc tách</b> — Cao: 90°-30°×cos, Dừng: 90°, Kéo: 90°+60°×cos']},
+      kick:{title:'4. Bank Shot',desc:'<b>Chức năng</b>: Tính đường bank khi bị chặn.',diamondTitle:'<b>Chế độ Diamond</b>(học):',diamondItems:['Hiện đường 1 bank + công thức diamond','Thang chia 0-8(cạnh dài) / 0-4(cạnh ngắn)'],autoTitle:'<b>Chế độ tự động</b>(thực tế):',autoItems:['<b>Cam=1bank</b>, <b>Xanh=2bank</b>, <b>Lục=3bank</b>, <b>Tím=4bank</b>','Thêm bi chướng ngại, đường bị chặn tự bỏ qua','Hiện đường ngắn nhất không bị chặn']},
+      position:{title:'5. Vị trí',desc:'<b>Chức năng</b>: Lập kế hoạch vị trí bi trắng, đặt mục tiêu để gợi ý điểm đánh.',items:['<b>Vùng quạt</b> — xanh=phạm vi đánh cao, lam=phạm vi kéo','<b>Click bàn đặt mục tiêu</b>(vòng vàng) → tự gợi ý điểm đánh và lực','<b>3 đường màu</b> — đường cao/dừng/kéo đầy đủ(có phản xạ)','<b>Đường cam</b> — đường mong muốn đến mục tiêu','<b>Gợi ý</b> — đúng hướng/lệch nhẹ/lệch nhiều']},
+      devtest:{title:'6. Test sai số',desc:'<b>Chức năng</b>: Test độ chính xác khi xác định vị trí bi ảo.',items:['<b>Quy trình</b>: Xem bố trí → click vị trí bi ảo → xem sai số(mm)','<b>Độ khó</b> — Dễ(≤30°) / TB(30-55°) / Khó(55°+) / Hỗn hợp','<b>Biểu đồ điểm</b>(góc trái dưới) — mỗi điểm = hướng và độ lệch','<b>Điểm vàng</b> = câu hiện tại, <b>Điểm đỏ</b> = lịch sử','<b>Đồng hồ</b> — ghi nhận tốc độ trả lời','<b>Thử lại câu tệ nhất</b> — luyện lại câu sai nhiều nhất','<b>Thống kê hướng</b> — sau 10 câu hiện xu hướng trái/phải/giữa']}
+    },
+    canvas: {cueBall:'Bi trắng',ghostBall:'Bi ảo',targetBall:'Bi đích',pocket:'Lỗ',cutAngle:'Góc cắt θ',
+      randomSetup:'Bố trí ngẫu nhiên',chooseAngle:'Chọn góc cắt',hitPtFace:'Mặt điểm đánh',
+      follow:'Cao',stun:'Dừng',draw:'Kéo',scatter:'Biểu đồ',historyDot:'Đỏ=lịch sử',currentDot:'Vàng=hiện tại',
+      flow:'Quy trình:',flowDesc:'Xem→Click→Kiểm tra sai số',diffLabel:'Độ khó: Dễ/TB/Khó/Hỗn hợp',
+      after10:'Sau 10 câu hiện thống kê',retryWorst:'Thử lại câu tệ',
+      obs:'Chướng ngại',rail1:'1bank(cam)',rail2:'2bank(xanh)',target:'Mục tiêu',followZone:'Đánh cao',drawZone:'Kéo',
+      posHi:'Cao',posMid:'Dừng',posLo:'Kéo'}
+  }
+};
+let curLang = localStorage.getItem('bl-lang') || 'zh';
+const L = () => LANG[curLang];
+
+// --- Constants ---
+const TABLE_W = 2540, TABLE_H = 1270;
+const BALL_R = 28.5;
+const POCKET_R = 52;
+const RAIL_W = 50;
+const MARGIN = 30;
+
+let W, H, scale, ox, oy;
+let dpr = window.devicePixelRatio || 1;
+let currentTab = 'aim';
+
+// --- State ---
+let balls = [];
+let cueBall = {x: TABLE_W*0.25, y: TABLE_H*0.5};
+let targetBall = {x: TABLE_W*0.65, y: TABLE_H*0.4};
+let obstacles = [];
+let selectedPocket = 0;
+let dragging = null;
+
+const POCKETS = [
+  {x:0, y:0}, {x:TABLE_W/2, y:-10}, {x:TABLE_W, y:0},
+  {x:0, y:TABLE_H}, {x:TABLE_W/2, y:TABLE_H+10}, {x:TABLE_W, y:TABLE_H}
+];
+
+// Aim sub-modes
+let aimMode = 'ghost';
+const AIM_MODES = ['ghost','overlap','tunnel','hitpt','cutline'];
+
+// Train state
+let trainState = {score:0, total:0, currentAngle:0, answered:false, history:[]};
+
+// Hitpoint state
+let spinPt = {row:1, col:1}; // 0=top,1=mid,2=bot × 0=left,1=center,2=right
+let powerLv = 3;
+let ballViewPos = null; // {x, y} screen coords, null = default position
+let draggingBallView = false;
+
+// Grid state
+let showGrid = false;
+
+// Kick state
+let kickMode = 'diamond';
+let kickObstacles = [];
+
+// Position state
+let posTarget = null;
+
+// Devtest state
+let devState = {
+  trials:[], current:0, clicked:false, userPt:null, history:[],
+  difficulty: 'mixed', // 'easy'(0-30°), 'medium'(30-60°), 'hard'(60-90°), 'mixed'
+  timer: null, startTime: 0, elapsed: 0, timeLimit: 0 // 0=no limit
+};
+
+// --- Resize ---
+function resize() {
+  const wrap = document.getElementById('canvasWrap');
+  const maxW = wrap.clientWidth - 16;
+  const maxH = wrap.clientHeight - 16;
+  const aspect = (TABLE_W + MARGIN*2 + RAIL_W*2) / (TABLE_H + MARGIN*2 + RAIL_W*2);
+  if (maxW / maxH > aspect) {
+    H = maxH; W = H * aspect;
+  } else {
+    W = maxW; H = W / aspect;
+  }
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  scale = (W - 16) / (TABLE_W + MARGIN*2 + RAIL_W*2);
+  ox = W/2 - (TABLE_W/2)*scale;
+  oy = H/2 - (TABLE_H/2)*scale;
+  draw();
+}
+window.addEventListener('resize', resize);
+
+// --- Coordinate transforms ---
+function toScreen(p) { return {x: ox + p.x*scale, y: oy + p.y*scale}; }
+function toTable(sx, sy) { return {x: (sx - ox)/scale, y: (sy - oy)/scale}; }
+function dist(a,b) { return Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2); }
+function angle(a,b) { return Math.atan2(b.y-a.y, b.x-a.x); }
+
+// --- Ghost ball & geometry ---
+function getGhostPos(cue, target, pocket) {
+  const pk = POCKETS[pocket];
+  const ang = Math.atan2(target.y - pk.y, target.x - pk.x);
+  return {x: target.x + Math.cos(ang)*BALL_R*2, y: target.y + Math.sin(ang)*BALL_R*2};
+}
+
+function getCutAngle(cue, target, pocket) {
+  const ghost = getGhostPos(cue, target, pocket);
+  const pocketDir = Math.atan2(POCKETS[pocket].y - ghost.y, POCKETS[pocket].x - ghost.x);
+  const aimDir = Math.atan2(ghost.y - cue.y, ghost.x - cue.x);
+  let diff = Math.abs(pocketDir - aimDir);
+  if (diff > Math.PI) diff = 2*Math.PI - diff;
+  return diff;
+}
+
+function findBestPocket(cue, target) {
+  let best = 0, bestScore = Infinity;
+  const shotDir = Math.atan2(target.y - cue.y, target.x - cue.x);
+  for (let i = 0; i < 6; i++) {
+    const pocketDir = Math.atan2(POCKETS[i].y - target.y, POCKETS[i].x - target.x);
+    let dirDiff = Math.abs(shotDir - pocketDir);
+    if (dirDiff > Math.PI) dirDiff = 2*Math.PI - dirDiff;
+    if (dirDiff > 1.4) continue;
+    const cutAng = getCutAngle(cue, target, i);
+    if (cutAng > 1.2) continue;
+    const pocketDist = dist(target, POCKETS[i]);
+    const score = cutAng * 2 + (pocketDist / TABLE_W) * 1.0 + dirDiff * 0.3;
+    if (score < bestScore) { bestScore = score; best = i; }
+  }
+  return best;
+}
+
+function getOverlapD(cutAngle) {
+  return 2 * BALL_R * Math.cos(cutAngle);
+}
+
+function getOverlapFraction(cutAngle) {
+  const ratio = 1 - Math.sin(cutAngle);
+  const eighths = Math.round(ratio * 8);
+  if (eighths >= 8) return '8/8';
+  if (eighths <= 0) return Math.round(ratio * 100) + '/100';
+  return eighths + '/8';
+}
+
+
+function getThickness(cutAngle) {
+  const deg = cutAngle * 180 / Math.PI;
+  const t = L().thick;
+  if (deg < 10) return t[0];
+  if (deg < 25) return t[1];
+  if (deg < 40) return t[2];
+  if (deg < 55) return t[3];
+  if (deg < 70) return t[4];
+  return t[5];
+}
+
+// --- Reflection for kick shots ---
+function reflectAcrossRail(p, rail) {
+  if (rail === 'top') return {x: p.x, y: -p.y};
+  if (rail === 'bottom') return {x: p.x, y: 2*TABLE_H - p.y};
+  if (rail === 'left') return {x: -p.x, y: p.y};
+  if (rail === 'right') return {x: 2*TABLE_W - p.x, y: p.y};
+}
+
+function lineRailIntersect(a, b, rail) {
+  let x, y;
+  if (rail === 'top') { y = 0; x = a.x + (b.x-a.x)*(0-a.y)/(b.y-a.y); }
+  else if (rail === 'bottom') { y = TABLE_H; x = a.x + (b.x-a.x)*(TABLE_H-a.y)/(b.y-a.y); }
+  else if (rail === 'left') { x = 0; y = a.y + (b.y-a.y)*(0-a.x)/(b.x-a.x); }
+  else { x = TABLE_W; y = a.y + (b.y-a.y)*(TABLE_W-a.x)/(b.x-a.x); }
+  if (x >= -1 && x <= TABLE_W+1 && y >= -1 && y <= TABLE_H+1) return {x,y};
+  return null;
+}
+
+function solve1Rail(start, end) {
+  const rails = ['top','bottom','left','right'];
+  let best = null, bestDist = Infinity;
+  for (const rail of rails) {
+    const reflected = reflectAcrossRail(end, rail);
+    const hit = lineRailIntersect(start, reflected, rail);
+    if (hit) {
+      const d = dist(start, hit) + dist(hit, end);
+      if (d < bestDist) { bestDist = d; best = {points: [start, hit, end], rail}; }
+    }
+  }
+  return best;
+}
+
+function solveAll1Rail(start, end) {
+  const rails = ['top','bottom','left','right'];
+  const results = [];
+  for (const rail of rails) {
+    const reflected = reflectAcrossRail(end, rail);
+    const hit = lineRailIntersect(start, reflected, rail);
+    if (hit) {
+      const d = dist(start, hit) + dist(hit, end);
+      results.push({points: [start, hit, end], rail, dist: d});
+    }
+  }
+  return results.sort((a, b) => a.dist - b.dist);
+}
+
+function solveAll2Rail(start, end) {
+  const railPairs = [['top','bottom'],['bottom','top'],['left','right'],['right','left'],
+                     ['top','left'],['top','right'],['bottom','left'],['bottom','right'],
+                     ['left','top'],['left','bottom'],['right','top'],['right','bottom']];
+  const results = [];
+  for (const [r1, r2] of railPairs) {
+    const ref1 = reflectAcrossRail(end, r2);
+    const ref2 = reflectAcrossRail(ref1, r1);
+    const hit1 = lineRailIntersect(start, ref2, r1);
+    if (!hit1) continue;
+    const hit2 = lineRailIntersect(hit1, ref1, r2);
+    if (!hit2) continue;
+    const d = dist(start, hit1) + dist(hit1, hit2) + dist(hit2, end);
+    results.push({points: [start, hit1, hit2, end], rails: [r1,r2], dist: d});
+  }
+  return results.sort((a, b) => a.dist - b.dist);
+}
+
+function solve2Rail(start, end) {
+  const all = solveAll2Rail(start, end);
+  return all.length > 0 ? all[0] : null;
+}
+
+function solveNRail(start, end, n) {
+  const rails = ['top','bottom','left','right'];
+  const results = [];
+  function generateRailSeqs(len) {
+    if (len === 1) return rails.map(r => [r]);
+    const shorter = generateRailSeqs(len - 1);
+    const seqs = [];
+    for (const seq of shorter) {
+      for (const r of rails) {
+        if (r !== seq[seq.length - 1]) seqs.push([...seq, r]);
+      }
+    }
+    return seqs;
+  }
+  const seqs = generateRailSeqs(n);
+  for (const railSeq of seqs) {
+    let reflected = end;
+    for (let i = n - 1; i >= 0; i--) {
+      reflected = reflectAcrossRail(reflected, railSeq[i]);
+    }
+    const hit1 = lineRailIntersect(start, reflected, railSeq[0]);
+    if (!hit1) continue;
+    const points = [start, hit1];
+    let valid = true;
+    for (let i = 1; i < n; i++) {
+      let target = end;
+      for (let j = n - 1; j >= i; j--) {
+        target = reflectAcrossRail(target, railSeq[j]);
+      }
+      const hit = lineRailIntersect(points[i], target, railSeq[i]);
+      if (!hit) { valid = false; break; }
+      points.push(hit);
+    }
+    if (!valid) continue;
+    points.push(end);
+    let d = 0;
+    for (let i = 0; i < points.length - 1; i++) d += dist(points[i], points[i+1]);
+    results.push({points, rails: railSeq, dist: d, cushions: n});
+  }
+  return results.sort((a, b) => a.dist - b.dist);
+}
+
+// --- Diamond system ---
+function getDiamondNum(p, rail) {
+  if (rail === 'top' || rail === 'bottom') return p.x / TABLE_W * 8;
+  return p.y / TABLE_H * 4;
+}
+
+function pointToSegmentDist(p, a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const len2 = dx*dx + dy*dy;
+  if (len2 === 0) return dist(p, a);
+  let t = ((p.x-a.x)*dx + (p.y-a.y)*dy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  return dist(p, {x: a.x + t*dx, y: a.y + t*dy});
+}
+
+function pathBlocked(points, obstacles) {
+  for (const ob of obstacles) {
+    for (let i = 0; i < points.length - 1; i++) {
+      if (pointToSegmentDist(ob, points[i], points[i+1]) < BALL_R * 2.5) return true;
+    }
+  }
+  return false;
+}
+
+// --- Separation angle ---
+// 基于真实台球物理：stun=90°法则，follow/draw根据切割角调整
+// 参考方向：目标球运动方向为0°，stun垂直=90°
+function getSeparationAngle(cutAngleDeg, spin) {
+  if (spin === 'stun') return 90;
+  const cutRad = cutAngleDeg * Math.PI / 180;
+  if (spin === 'follow') {
+    // follow使分离角<90°（母球跟进方向）
+    // 直球(0°切)时跟进≈0°；大角度时效果减弱趋近90°
+    const deflection = 30 * Math.cos(cutRad);
+    return 90 - deflection;
+  }
+  if (spin === 'draw') {
+    // draw使分离角>90°（母球回拉方向）
+    // 直球(0°切)时回拉≈150°；大角度时效果减弱趋近90°
+    const deflection = 60 * Math.cos(cutRad);
+    return 90 + deflection;
+  }
+  return 90;
+}
+
+// --- Drawing ---
+function drawTable() {
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+  // Frame
+  ctx.fillStyle = '#1a1208';
+  ctx.fillRect(-RAIL_W, -RAIL_W, TABLE_W + RAIL_W*2, TABLE_H + RAIL_W*2);
+  // Felt
+  ctx.fillStyle = '#0d7a3a';
+  ctx.fillRect(0, 0, TABLE_W, TABLE_H);
+  // Rail lines
+  ctx.strokeStyle = '#15914a';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(0, 0, TABLE_W, TABLE_H);
+  // Diamonds on rails
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for (let i = 1; i < 8; i++) {
+    const x = TABLE_W * i / 8;
+    ctx.beginPath(); ctx.arc(x, -RAIL_W/2, 4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x, TABLE_H + RAIL_W/2, 4, 0, Math.PI*2); ctx.fill();
+  }
+  for (let i = 1; i < 4; i++) {
+    const y = TABLE_H * i / 4;
+    ctx.beginPath(); ctx.arc(-RAIL_W/2, y, 4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(TABLE_W + RAIL_W/2, y, 4, 0, Math.PI*2); ctx.fill();
+  }
+  // Grid lines
+  if (showGrid) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 2.5;
+    for (let i = 1; i < 8; i++) {
+      const x = TABLE_W * i / 8;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, TABLE_H); ctx.stroke();
+    }
+    for (let i = 1; i < 4; i++) {
+      const y = TABLE_H * i / 4;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(TABLE_W, y); ctx.stroke();
+    }
+  }
+  // Pockets
+  ctx.fillStyle = '#111';
+  for (const p of POCKETS) {
+    ctx.beginPath(); ctx.arc(p.x, p.y, POCKET_R, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawBall(p, color, label, glow) {
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+  if (glow) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, BALL_R * 1.6, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,197,51,0.15)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, BALL_R * 1.25, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,197,51,0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, BALL_R, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  // Highlight
+  ctx.beginPath();
+  ctx.arc(p.x - BALL_R*0.3, p.y - BALL_R*0.3, BALL_R*0.25, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fill();
+  if (label) {
+    ctx.fillStyle = '#fff';
+    ctx.font = `${BALL_R*0.9}px sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(label, p.x, p.y);
+  }
+  ctx.restore();
+}
+
+function drawLine(a, b, color, width, dash) {
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+  ctx.beginPath();
+  if (dash) ctx.setLineDash(dash);
+  ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width / scale;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function drawBouncePath(start, dir, totalLen, colorBase, alpha, label) {
+  let remaining = totalLen;
+  let pos = {x: start.x, y: start.y};
+  let ang = dir;
+  const segments = [];
+  let bounces = 0;
+  while (remaining > 1 && bounces <= 3) {
+    const dx = Math.cos(ang), dy = Math.sin(ang);
+    let minT = remaining, hitRail = null;
+    if (dy < 0) { const t = -pos.y / dy; if (t > 0.5 && t < minT) { minT = t; hitRail = 'top'; }}
+    if (dy > 0) { const t = (TABLE_H - pos.y) / dy; if (t > 0.5 && t < minT) { minT = t; hitRail = 'bottom'; }}
+    if (dx < 0) { const t = -pos.x / dx; if (t > 0.5 && t < minT) { minT = t; hitRail = 'left'; }}
+    if (dx > 0) { const t = (TABLE_W - pos.x) / dx; if (t > 0.5 && t < minT) { minT = t; hitRail = 'right'; }}
+    const endPt = {x: pos.x + dx * minT, y: pos.y + dy * minT};
+    segments.push({from: {...pos}, to: endPt, bounce: bounces});
+    remaining -= minT;
+    if (!hitRail || remaining <= 0) break;
+    pos = endPt;
+    if (hitRail === 'top' || hitRail === 'bottom') ang = -ang;
+    else ang = Math.PI - ang;
+    bounces++;
+  }
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+  segments.forEach((seg, i) => {
+    const a = i === 0 ? alpha : Math.max(alpha, 0.5);
+    const color = colorBase + a + ')';
+    ctx.beginPath();
+    ctx.moveTo(seg.from.x, seg.from.y);
+    ctx.lineTo(seg.to.x, seg.to.y);
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+    if (i > 0) ctx.setLineDash([8, 6]); else ctx.setLineDash([]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (i > 0) {
+      ctx.beginPath(); ctx.arc(seg.from.x, seg.from.y, 7, 0, Math.PI*2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.beginPath(); ctx.arc(seg.from.x, seg.from.y, 5, 0, Math.PI*2);
+      ctx.fillStyle = colorBase + '1)'; ctx.fill();
+    }
+  });
+  // Arrow at final point
+  const last = segments[segments.length - 1];
+  if (last) {
+    const aDir = Math.atan2(last.to.y - last.from.y, last.to.x - last.from.x);
+    const aLen = 16;
+    ctx.beginPath();
+    ctx.moveTo(last.to.x, last.to.y);
+    ctx.lineTo(last.to.x - aLen*Math.cos(aDir-0.4), last.to.y - aLen*Math.sin(aDir-0.4));
+    ctx.lineTo(last.to.x - aLen*Math.cos(aDir+0.4), last.to.y - aLen*Math.sin(aDir+0.4));
+    ctx.closePath();
+    ctx.fillStyle = colorBase + alpha + ')'; ctx.fill();
+    if (label) {
+      ctx.fillStyle = colorBase + '0.7)'; ctx.font = '28px sans-serif';
+      ctx.fillText(label, last.to.x + 8, last.to.y + 8);
+    }
+  }
+  ctx.restore();
+}
+
+function drawArrow(from, to, color) {
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+  const ang = Math.atan2(to.y-from.y, to.x-from.x);
+  const len = 20;
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y);
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(to.x, to.y);
+  ctx.lineTo(to.x - len*Math.cos(ang-0.4), to.y - len*Math.sin(ang-0.4));
+  ctx.lineTo(to.x - len*Math.cos(ang+0.4), to.y - len*Math.sin(ang+0.4));
+  ctx.closePath();
+  ctx.fillStyle = color; ctx.fill();
+  ctx.restore();
+}
+
+function drawText(p, text, color, size) {
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+  ctx.font = `600 ${size || 24}px sans-serif`;
+  ctx.fillStyle = color || '#fff';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText(text, p.x, p.y - BALL_R - 8);
+  ctx.restore();
+}
+
+function drawCircle(p, r, color, dash) {
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+  ctx.beginPath();
+  if (dash) ctx.setLineDash(dash);
+  ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+// --- Module: Aim ---
+function drawAim() {
+  drawTable();
+  const pocket = selectedPocket;
+  const ghost = getGhostPos(cueBall, targetBall, pocket);
+  const cutAng = getCutAngle(cueBall, targetBall, pocket);
+  const cutDeg = (cutAng * 180 / Math.PI).toFixed(1);
+  const dVal = (getOverlapD(cutAng) / BALL_R).toFixed(2);
+  const pk = POCKETS[pocket];
+
+  // Pocket line
+  drawLine(targetBall, pk, 'rgba(255,255,255,0.2)', 1.5, [8,6]);
+
+  if (aimMode === 'ghost') {
+    // Ghost ball
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.globalAlpha = 0.35;
+    ctx.beginPath(); ctx.arc(ghost.x, ghost.y, BALL_R, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    drawLine(cueBall, ghost, 'rgba(255,197,51,0.6)', 1.5, [10,5]);
+    drawLine(ghost, pk, '#59d499', 1.5);
+    // d-value label near ghost ball
+    const dLabel = {x:(ghost.x+targetBall.x)/2, y:(ghost.y+targetBall.y)/2 - 35};
+    drawText(dLabel, `${L().info.overlap} ${getOverlapFraction(cutAng)}`, '#ffc533', 18);
+    // Stun separation line (90° from force direction, on cue ball's approach side)
+    const ghostToPk = angle(ghost, pk);
+    const ghostCross = Math.sin(ghostToPk - angle(cueBall, ghost));
+    const sepAng = ghostToPk + (ghostCross > 0 ? -Math.PI/2 : Math.PI/2);
+    const sepEnd = {x: ghost.x + Math.cos(sepAng)*150, y: ghost.y + Math.sin(sepAng)*150};
+    drawLine(ghost, sepEnd, 'rgba(87,193,255,0.4)', 1.5, [6,4]);
+  }
+  else if (aimMode === 'overlap') {
+    // Overlap method: show d-value
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath(); ctx.arc(ghost.x, ghost.y, BALL_R, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.globalAlpha = 1;
+    // Draw overlap region
+    const overlapD = getOverlapD(cutAng);
+    if (overlapD > 0) {
+      ctx.beginPath();
+      ctx.arc(targetBall.x, targetBall.y, BALL_R, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,100,100,0.2)'; ctx.fill();
+    }
+    ctx.restore();
+    drawLine(cueBall, ghost, 'rgba(255,197,51,0.5)', 1.5, [8,5]);
+    // d-value label
+    const mid = {x:(ghost.x+targetBall.x)/2, y:(ghost.y+targetBall.y)/2 - 40};
+    drawText(mid, `${L().info.overlap} ${getOverlapFraction(cutAng)}`, '#ffc533', 22);
+  }
+  else if (aimMode === 'tunnel') {
+    // Tunnel/corridor aiming
+    const ang = angle(cueBall, ghost);
+    const perpX = Math.cos(ang + Math.PI/2) * BALL_R;
+    const perpY = Math.sin(ang + Math.PI/2) * BALL_R;
+    drawLine({x:cueBall.x+perpX, y:cueBall.y+perpY}, {x:ghost.x+perpX, y:ghost.y+perpY}, 'rgba(255,197,51,0.4)', 1.5);
+    drawLine({x:cueBall.x-perpX, y:cueBall.y-perpY}, {x:ghost.x-perpX, y:ghost.y-perpY}, 'rgba(255,197,51,0.4)', 1.5);
+    // Center line
+    drawLine(cueBall, ghost, 'rgba(255,197,51,0.7)', 2);
+    // Ghost ball
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath(); ctx.arc(ghost.x, ghost.y, BALL_R, 0, Math.PI*2);
+    ctx.strokeStyle = '#ffc533'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    drawLine(ghost, pk, '#59d499', 1.5);
+  }
+  else if (aimMode === 'hitpt') {
+    // Collision point on target ball: the point where ghost ball touches target ball
+    // This is on the side FACING the ghost ball (opposite to pocket direction)
+    const ang2 = angle(targetBall, ghost);
+    const hitX = targetBall.x + Math.cos(ang2) * BALL_R;
+    const hitY = targetBall.y + Math.sin(ang2) * BALL_R;
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.beginPath(); ctx.arc(hitX, hitY, 6, 0, Math.PI*2);
+    ctx.fillStyle = '#ff5555'; ctx.fill();
+    ctx.restore();
+    drawLine(cueBall, {x:hitX, y:hitY}, 'rgba(255,197,51,0.5)', 1.5, [8,5]);
+    drawLine(targetBall, pk, '#59d499', 1.5);
+  }
+  else if (aimMode === 'cutline') {
+    // Cut line on ball surface
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    const ang2 = angle(POCKETS[pocket], targetBall);
+    // Vertical reference
+    ctx.beginPath();
+    ctx.moveTo(targetBall.x, targetBall.y - BALL_R);
+    ctx.lineTo(targetBall.x, targetBall.y + BALL_R);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5; ctx.stroke();
+    // Cut direction line
+    ctx.beginPath();
+    ctx.moveTo(targetBall.x + Math.cos(ang2)*BALL_R, targetBall.y + Math.sin(ang2)*BALL_R);
+    ctx.lineTo(targetBall.x - Math.cos(ang2)*BALL_R, targetBall.y - Math.sin(ang2)*BALL_R);
+    ctx.strokeStyle = '#ff5555'; ctx.lineWidth = 2; ctx.stroke();
+    // Horizontal
+    ctx.beginPath();
+    ctx.moveTo(targetBall.x - BALL_R, targetBall.y);
+    ctx.lineTo(targetBall.x + BALL_R, targetBall.y);
+    ctx.strokeStyle = 'rgba(87,193,255,0.5)'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.restore();
+    drawLine(cueBall, ghost, 'rgba(255,197,51,0.4)', 1.5, [8,5]);
+    drawLine(targetBall, pk, '#59d499', 1.5);
+  }
+
+  drawBall(targetBall, '#cc3333', '', dragging === 'target');
+  drawBall(cueBall, '#ffffff', '', dragging === 'cue');
+
+  // Highlight selected pocket
+  ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+  ctx.beginPath(); ctx.arc(pk.x, pk.y, POCKET_R + 8, 0, Math.PI*2);
+  ctx.strokeStyle = '#ffc533'; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.restore();
+
+  // Info panel
+  const distMm = dist(cueBall, targetBall);
+  const li = L().info;
+  infoEl.innerHTML = `<span class="info-tag primary">${li.angle} <b>${cutDeg}°</b></span><span class="info-tag">${li.dval} <b>${dVal}R</b></span><span class="info-tag">${li.overlap} <b>${getOverlapFraction(cutAng)}</b></span><span class="info-tag">${li.thick} <b>${getThickness(cutAng)}</b></span><span class="info-tag">${li.distance} <b>${(distMm/TABLE_H).toFixed(2)}${li.tw} (${(distMm/(BALL_R*2)).toFixed(0)}${li.bd})</b></span>`;
+}
+
+// --- Module: Train ---
+function trainNewQuestion() {
+  trainState.answered = false;
+  trainState.userPt = null;
+  // Random positions
+  cueBall = {x: TABLE_W*0.15 + Math.random()*TABLE_W*0.3, y: TABLE_H*0.2 + Math.random()*TABLE_H*0.6};
+  targetBall = {x: TABLE_W*0.5 + Math.random()*TABLE_W*0.35, y: TABLE_H*0.15 + Math.random()*TABLE_H*0.7};
+  selectedPocket = findBestPocket(cueBall, targetBall);
+  trainState.currentAngle = getCutAngle(cueBall, targetBall, selectedPocket) * 180 / Math.PI;
+  draw();
+}
+
+function trainAnswer(rangeIdx) {
+  if (trainState.answered) return;
+  trainState.answered = true;
+  trainState.total++;
+  const ranges = [[0,15],[15,30],[30,45],[45,60],[60,90]];
+  const [lo, hi] = ranges[rangeIdx];
+  const correct = trainState.currentAngle >= lo && trainState.currentAngle < hi;
+  if (correct) trainState.score++;
+  trainState.lastCorrect = correct;
+  trainState.lastRange = rangeIdx;
+  draw();
+  updateControls();
+}
+
+function drawTrain() {
+  drawTable();
+  const pocket = selectedPocket;
+  const pk = POCKETS[pocket];
+  drawLine(targetBall, pk, 'rgba(255,255,255,0.15)', 1.5, [8,6]);
+  drawBall(targetBall, '#cc3333', '', dragging === 'target');
+  drawBall(cueBall, '#ffffff', '', dragging === 'cue');
+  // Highlight pocket
+  ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+  ctx.beginPath(); ctx.arc(pk.x, pk.y, POCKET_R+6, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(255,197,51,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.restore();
+
+  if (trainState.answered) {
+    const ghost = getGhostPos(cueBall, targetBall, pocket);
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath(); ctx.arc(ghost.x, ghost.y, BALL_R, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    drawLine(cueBall, ghost, 'rgba(255,197,51,0.5)', 1.5, [8,5]);
+    drawLine(ghost, pk, '#59d499', 1.5);
+    const angDeg = trainState.currentAngle.toFixed(1);
+    drawText({x:TABLE_W/2, y:TABLE_H/2}, `${angDeg}°`, trainState.lastCorrect ? '#59d499' : '#ff5555', 36);
+  }
+
+  infoEl.innerHTML = `<span class="info-tag">${L().info.score} <b>${trainState.score}/${trainState.total}</b></span><span class="info-tag primary">${L().info.accuracy} <b>${trainState.total ? Math.round(trainState.score/trainState.total*100) : 0}%</b></span>`;
+}
+
+// --- Module: Hitpoint ---
+function getSpinName() {
+  return L().spin[spinPt.row][spinPt.col];
+}
+
+function getSpinType() {
+  if (spinPt.row === 0) return 'follow';
+  if (spinPt.row === 2) return 'draw';
+  return 'stun';
+}
+
+function drawHitpoint() {
+  drawTable();
+  const pocket = selectedPocket;
+  const ghost = getGhostPos(cueBall, targetBall, pocket);
+  const cutAng = getCutAngle(cueBall, targetBall, pocket);
+  const cutDeg = cutAng * 180 / Math.PI;
+  const pk = POCKETS[pocket];
+
+  drawLine(targetBall, pk, 'rgba(255,255,255,0.15)', 1.5, [8,6]);
+  drawLine(cueBall, ghost, 'rgba(255,197,51,0.4)', 1.5, [8,5]);
+  drawBall(targetBall, '#cc3333', '', dragging === 'target');
+  drawBall(cueBall, '#ffffff', '', dragging === 'cue');
+
+  // Separation angle + position arrow
+  const cueToGhost = angle(cueBall, ghost);
+  const targetToPocket = angle(ghost, pk);
+  const spinType = getSpinType();
+  const cross = Math.sin(targetToPocket - cueToGhost);
+  let stunDir = targetToPocket + (cross > 0 ? -Math.PI/2 : Math.PI/2);
+  const cutRad = cutAng;
+  const hpFollowDeflect = 0.52 * Math.cos(cutRad);
+  const hpDrawDeflect = 1.05 * Math.cos(cutRad);
+  // Determine deflection direction: toward shot for follow, away for draw
+  let toShot = cueToGhost - stunDir;
+  if (toShot > Math.PI) toShot -= 2*Math.PI;
+  if (toShot < -Math.PI) toShot += 2*Math.PI;
+  const deflectSign = toShot > 0 ? 1 : -1;
+  const followDir = stunDir + deflectSign * hpFollowDeflect;
+  const drawDir = stunDir - deflectSign * hpDrawDeflect;
+  let exitDir = stunDir;
+  if (spinType === 'follow') exitDir = followDir;
+  if (spinType === 'draw') exitDir = drawDir;
+  const posLen = TABLE_H * 0.1 * powerLv * powerLv;
+  // Draw all three separation lines with bounce
+  const pl = L().posLabels;
+  const allDirs = [{dir: followDir, color: 'rgba(255,120,80,', label: pl.follow}, {dir: stunDir, color: 'rgba(180,180,180,', label: pl.stun}, {dir: drawDir, color: 'rgba(120,200,255,', label: pl.draw}];
+  allDirs.forEach(d => {
+    const isActive = Math.abs(d.dir - exitDir) < 0.01;
+    const alpha = isActive ? 0.8 : 0.35;
+    drawBouncePath(ghost, d.dir, posLen, d.color, alpha, !isActive ? d.label : null);
+  });
+
+  // Draw large cue ball face (draggable)
+  const ballViewR = 55;
+  if (!ballViewPos) ballViewPos = {x: W - ballViewR - 20, y: ballViewR + 20};
+  const bvX = ballViewPos.x;
+  const bvY = ballViewPos.y;
+  ctx.save();
+  // Ball circle
+  ctx.beginPath(); ctx.arc(bvX, bvY, ballViewR, 0, Math.PI*2);
+  const grad = ctx.createRadialGradient(bvX - ballViewR*0.3, bvY - ballViewR*0.3, 2, bvX, bvY, ballViewR);
+  grad.addColorStop(0, '#ffffff');
+  grad.addColorStop(1, '#b0b0b0');
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = '#555'; ctx.lineWidth = 2; ctx.stroke();
+  // Grid lines on ball
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(bvX - ballViewR, bvY); ctx.lineTo(bvX + ballViewR, bvY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(bvX, bvY - ballViewR); ctx.lineTo(bvX, bvY + ballViewR); ctx.stroke();
+  // 9 points grid
+  const spacing = ballViewR * 0.5;
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      const px = bvX + (c-1)*spacing;
+      const py = bvY + (r-1)*spacing;
+      ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI*2);
+      if (r === spinPt.row && c === spinPt.col) {
+        ctx.fillStyle = '#ff3333';
+      } else {
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      }
+      ctx.fill();
+    }
+  }
+  // Active point highlight
+  const apx = bvX + (spinPt.col-1)*spacing;
+  const apy = bvY + (spinPt.row-1)*spacing;
+  ctx.beginPath(); ctx.arc(apx, apy, 9, 0, Math.PI*2);
+  ctx.strokeStyle = '#ff3333'; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.restore();
+
+  // Power indicator
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`力度 ${powerLv}/5`, bvX, bvY + ballViewR + 20);
+  ctx.restore();
+
+  // Calculate separation angles for all spin types
+  const followDeflectDeg = 0.52 * Math.cos(cutRad) * 180 / Math.PI;
+  const drawDeflectDeg = 1.05 * Math.cos(cutRad) * 180 / Math.PI;
+  const stunSepDeg = 90;
+  const followSepDeg = (90 - followDeflectDeg).toFixed(0);
+  const drawSepDeg = (90 + drawDeflectDeg).toFixed(0);
+  let sepRad = Math.abs(exitDir - targetToPocket);
+  if (sepRad > Math.PI) sepRad = 2*Math.PI - sepRad;
+  const currentSepDeg = (sepRad * 180 / Math.PI).toFixed(1);
+  const hi = L().info;
+  infoEl.innerHTML = `<span class="info-tag">${hi.spin} <b>${getSpinName()}</b></span><span class="info-tag">${hi.power} <b>${powerLv}/5</b></span><span class="info-tag primary">${hi.cutAngle} <b>${cutDeg.toFixed(1)}°</b></span><span class="info-tag primary">${hi.curSep} <b>${currentSepDeg}°</b></span><span class="info-tag">${L().btn.follow}<b>${followSepDeg}°</b> ${L().btn.stun}<b>90°</b> ${L().btn.draw}<b>${drawSepDeg}°</b></span>`;
+}
+
+// --- Module: Kick ---
+function drawKick() {
+  drawTable();
+  // Draw diamond numbers
+  ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+  ctx.font = '18px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.textAlign = 'center';
+  for (let i = 0; i <= 8; i++) {
+    ctx.fillText(i.toString(), TABLE_W*i/8, -RAIL_W - 5);
+    ctx.fillText(i.toString(), TABLE_W*i/8, TABLE_H + RAIL_W + 18);
+  }
+  for (let i = 0; i <= 4; i++) {
+    ctx.fillText(i.toString(), -RAIL_W - 12, TABLE_H*i/4 + 6);
+    ctx.fillText(i.toString(), TABLE_W + RAIL_W + 12, TABLE_H*i/4 + 6);
+  }
+  ctx.restore();
+
+  drawBall(targetBall, '#cc3333', '', dragging === 'target');
+  drawBall(cueBall, '#ffffff', '', dragging === 'cue');
+
+  if (kickMode === 'diamond') {
+    // 颗星模式：只画1库 + 展示计算公式
+    const sol1 = solve1Rail(cueBall, targetBall);
+    if (sol1) {
+      for (let i = 0; i < sol1.points.length - 1; i++) {
+        drawLine(sol1.points[i], sol1.points[i+1], 'rgba(255,197,51,0.7)', 2, i===0 ? null : [8,5]);
+      }
+      const hitPt = sol1.points[1];
+      const hitDia = getDiamondNum(hitPt, sol1.rail).toFixed(1);
+      drawText(hitPt, `${hitDia}${L().info.diamond}`, '#ffc533', 20);
+    }
+    const cueRail = cueBall.y < TABLE_H/2 ? 'top' : 'bottom';
+    const targetRail = targetBall.y < TABLE_H/2 ? 'top' : 'bottom';
+    const cueDia = getDiamondNum(cueBall, cueRail).toFixed(1);
+    const targetDia = getDiamondNum(targetBall, targetRail).toFixed(1);
+    const hitDia = sol1 ? getDiamondNum(sol1.points[1], sol1.rail).toFixed(1) : '-';
+    const ki = L().info;
+    const railName = sol1 ? (sol1.rail === 'top' ? ki.railTop : sol1.rail === 'bottom' ? ki.railBot : sol1.rail === 'left' ? ki.railLeft : ki.railRight) : '';
+    infoEl.innerHTML = `<span class="info-tag">${ki.cue} <b>${cueDia}${ki.diamond}</b></span><span class="info-tag">${ki.target} <b>${targetDia}${ki.diamond}</b></span><span class="info-tag primary">${ki.hitPt} <b>${hitDia}${ki.diamond}(${railName})</b></span>`;
+  } else {
+    // 自动解球：画障碍球 + 搜索1-4库未被挡的路线
+    for (const ob of kickObstacles) drawBall(ob, '#666', '');
+    const all1 = solveAll1Rail(cueBall, targetBall);
+    const all2 = solveAll2Rail(cueBall, targetBall);
+    const all3 = solveNRail(cueBall, targetBall, 3);
+    const all4 = solveNRail(cueBall, targetBall, 4);
+    const open1 = all1.filter(s => !pathBlocked(s.points, kickObstacles));
+    const open2 = all2.filter(s => !pathBlocked(s.points, kickObstacles));
+    const open3 = all3.filter(s => !pathBlocked(s.points, kickObstacles));
+    const open4 = all4.filter(s => !pathBlocked(s.points, kickObstacles));
+    const colors = [
+      'rgba(255,197,51,',   // 1库 橙
+      'rgba(87,193,255,',   // 2库 蓝
+      'rgba(150,255,130,',  // 3库 绿
+      'rgba(220,150,255,',  // 4库 紫
+    ];
+    const openSets = [open1, open2, open3, open4];
+    let routes = 0;
+    openSets.forEach((openList, idx) => {
+      if (openList.length > 0) {
+        const sol = openList[0];
+        const base = colors[idx];
+        for (let i = 0; i < sol.points.length - 1; i++) {
+          drawLine(sol.points[i], sol.points[i+1], base + '0.7)', idx === 0 ? 2 : 1.5, idx === 0 && i === 0 ? null : [6,4]);
+        }
+        if (idx === 0) {
+          drawText(sol.points[1], `${getDiamondNum(sol.points[1], sol.rail).toFixed(1)}${L().info.diamond}`, '#ffc533', 20);
+        }
+        routes++;
+      }
+    });
+    if (routes === 0) {
+      // 全被挡，画最短1库红色提示
+      if (all1.length > 0) {
+        for (let i = 0; i < all1[0].points.length - 1; i++) {
+          drawLine(all1[0].points[i], all1[0].points[i+1], 'rgba(255,80,80,0.4)', 2, [6,4]);
+        }
+      }
+    }
+    const kl = L().kickColors;
+    const shownLabels = openSets.map((o, i) => o.length > 0 ? kl[i] : null).filter(Boolean).join(', ');
+    const ki2 = L().info;
+    infoEl.innerHTML = `<span class="info-tag">${ki2.mode} <b>${ki2.autoMode}</b></span><span class="info-tag primary">${ki2.routes} <b>${routes}${ki2.routeUnit}</b></span>${shownLabels ? `<span class="info-tag">(${shownLabels})</span>` : ''}${routes === 0 ? `<span class="info-tag" style="color:#ff5555">${ki2.allBlocked}</span>` : ''}`;
+  }
+}
+
+// --- Module: Position ---
+function drawPosition() {
+  drawTable();
+  const pocket = selectedPocket;
+  const ghost = getGhostPos(cueBall, targetBall, pocket);
+  const cutAng = getCutAngle(cueBall, targetBall, pocket);
+  const cutDeg = cutAng * 180 / Math.PI;
+  const pk = POCKETS[pocket];
+
+  drawLine(targetBall, pk, 'rgba(255,255,255,0.15)', 1.5, [8,6]);
+  drawLine(cueBall, ghost, 'rgba(255,197,51,0.4)', 1.5, [8,5]);
+
+  // Draw reachable zone (fan shape)
+  const cueToGhost = angle(cueBall, ghost);
+  const targetToPocket = angle(ghost, pk);
+  const cross = Math.sin(targetToPocket - cueToGhost);
+  const stunDir = targetToPocket + (cross > 0 ? -Math.PI/2 : Math.PI/2);
+  const followDeflect = 0.52 * Math.cos(cutAng);
+  const drawDeflect = 1.05 * Math.cos(cutAng);
+  let toShot2 = cueToGhost - stunDir;
+  if (toShot2 > Math.PI) toShot2 -= 2*Math.PI;
+  if (toShot2 < -Math.PI) toShot2 += 2*Math.PI;
+  const ds2 = toShot2 > 0 ? 1 : -1;
+  const followDir = stunDir + ds2 * followDeflect;
+  const drawDir = stunDir - ds2 * drawDeflect;
+
+  // Fan zone (only when no target set)
+  if (!posTarget) {
+    const fanLen = Math.min(TABLE_H * 0.1 * powerLv * powerLv, TABLE_H * 0.4);
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.beginPath(); ctx.rect(0, 0, TABLE_W, TABLE_H); ctx.clip();
+    ctx.globalAlpha = 0.10;
+    const fMin = Math.min(followDir, stunDir) - 0.1;
+    const fMax = Math.max(followDir, stunDir) + 0.1;
+    ctx.beginPath();
+    ctx.moveTo(ghost.x, ghost.y);
+    ctx.arc(ghost.x, ghost.y, fanLen, fMin, fMax);
+    ctx.closePath();
+    ctx.fillStyle = '#59d499'; ctx.fill();
+    const dMin = Math.min(stunDir, drawDir) - 0.1;
+    const dMax = Math.max(stunDir, drawDir) + 0.1;
+    ctx.beginPath();
+    ctx.moveTo(ghost.x, ghost.y);
+    ctx.arc(ghost.x, ghost.y, fanLen, dMin, dMax);
+    ctx.closePath();
+    ctx.fillStyle = '#57c1ff'; ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  // Position target analysis — auto switch spin & power
+  let recommend = '';
+  if (posTarget) {
+    const targetDir = Math.atan2(posTarget.y - ghost.y, posTarget.x - ghost.x);
+    const targetDist = dist(ghost, posTarget);
+    // 计算目标方向与各杆法分离方向的角度差
+    let diffFollow = Math.abs(targetDir - followDir);
+    if (diffFollow > Math.PI) diffFollow = 2*Math.PI - diffFollow;
+    let diffStun = Math.abs(targetDir - stunDir);
+    if (diffStun > Math.PI) diffStun = 2*Math.PI - diffStun;
+    let diffDraw = Math.abs(targetDir - drawDir);
+    if (diffDraw > Math.PI) diffDraw = 2*Math.PI - diffDraw;
+    // 自动切换到最接近的杆法
+    if (diffFollow < diffStun && diffFollow < diffDraw) { spinPt = {row:0, col:1}; }
+    else if (diffDraw < diffStun && diffDraw < diffFollow) { spinPt = {row:2, col:1}; }
+    else { spinPt = {row:1, col:1}; }
+    // 自动切换力度
+    let recPower = Math.round(Math.sqrt(targetDist / (TABLE_H * 0.1)));
+    powerLv = Math.max(1, Math.min(5, recPower));
+    // 方向偏差
+    const recDir = spinPt.row === 0 ? followDir : spinPt.row === 2 ? drawDir : stunDir;
+    let dirDiff = Math.abs(targetDir - recDir) * 180 / Math.PI;
+    const dirHint = dirDiff < 5 ? L().info.dirMatch : dirDiff < 15 ? L().info.dirSlight : L().info.dirLarge;
+    recommend = `<span class="info-tag primary">${dirHint}</span>`;
+  }
+
+  // Position arrow
+  if (posTarget) {
+    // 有目标时：箭头直接指向目标
+    const targetDir = Math.atan2(posTarget.y - ghost.y, posTarget.x - ghost.x);
+    const targetDist = dist(ghost, posTarget);
+    drawBouncePath(ghost, targetDir, targetDist, 'rgba(255,197,51,', 0.7, null);
+    // 目标标记
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.beginPath(); ctx.arc(posTarget.x, posTarget.y, 12, 0, Math.PI*2);
+    ctx.strokeStyle = '#ffc533'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.beginPath(); ctx.arc(posTarget.x, posTarget.y, 3, 0, Math.PI*2);
+    ctx.fillStyle = '#ffc533'; ctx.fill();
+    ctx.restore();
+    // 三条杆法方向各自走到力度对应长度
+    const dirs = [
+      {dir: followDir, color: 'rgba(255,120,80,', label: L().posLabels.follow, power: 3},
+      {dir: stunDir, color: 'rgba(180,180,180,', label: L().posLabels.stun, power: 3},
+      {dir: drawDir, color: 'rgba(120,200,255,', label: L().posLabels.draw, power: 3}
+    ];
+    dirs.forEach(d => {
+      const len = TABLE_H * 0.1 * powerLv * powerLv;
+      drawBouncePath(ghost, d.dir, len, d.color, 0.45, d.label);
+    });
+  } else {
+    // 无目标时：按当前杆法画分离方向
+    const spinType = getSpinType();
+    let exitDir = stunDir;
+    if (spinType === 'follow') exitDir = followDir;
+    if (spinType === 'draw') exitDir = drawDir;
+    const posLen = TABLE_H * 0.1 * powerLv * powerLv;
+    drawBouncePath(ghost, exitDir, posLen, 'rgba(87,193,255,', 0.6, null);
+  }
+
+  drawBall(targetBall, '#cc3333', '', dragging === 'target');
+  drawBall(cueBall, '#ffffff', '', dragging === 'cue');
+
+  // Highlight pocket
+  ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+  ctx.beginPath(); ctx.arc(pk.x, pk.y, POCKET_R+6, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(255,197,51,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.restore();
+
+  const pi = L().info;
+  infoEl.innerHTML = `<span class="info-tag primary">${pi.angle} <b>${cutDeg.toFixed(1)}°</b></span><span class="info-tag">${pi.spinMethod} <b>${getSpinName()}</b></span><span class="info-tag">${pi.power} <b>${powerLv}/5</b></span>${recommend}${!posTarget ? `<span class="info-tag">${pi.clickTarget}</span>` : ''}`;
+}
+
+// --- Module: DevTest ---
+function devNewQuestion(retryItem) {
+  devState.clicked = false;
+  devState.userPt = null;
+  if (retryItem) {
+    cueBall = {...retryItem.cue};
+    targetBall = {...retryItem.target};
+    selectedPocket = retryItem.pocket;
+  } else {
+    // 按难度生成球位
+    let attempts = 0, cutDeg = 0;
+    do {
+      cueBall = {x: TABLE_W*0.15 + Math.random()*TABLE_W*0.3, y: TABLE_H*0.15 + Math.random()*TABLE_H*0.7};
+      targetBall = {x: TABLE_W*0.45 + Math.random()*TABLE_W*0.4, y: TABLE_H*0.15 + Math.random()*TABLE_H*0.7};
+      selectedPocket = findBestPocket(cueBall, targetBall);
+      cutDeg = getCutAngle(cueBall, targetBall, selectedPocket) * 180 / Math.PI;
+      attempts++;
+    } while (attempts < 50 && !devAngleInRange(cutDeg));
+  }
+  devState.history.push({cue: {...cueBall}, target: {...targetBall}, pocket: selectedPocket, userPt: null, dev: null, dirX: null, time: 0});
+  devState.current = devState.history.length - 1;
+  devState.startTime = Date.now();
+  if (devState.timer) clearInterval(devState.timer);
+  if (devState.timeLimit > 0) {
+    devState.elapsed = 0;
+    devState.timer = setInterval(() => {
+      devState.elapsed = ((Date.now() - devState.startTime) / 1000).toFixed(1);
+      const timerLabel = L().info.timer;
+      infoEl.innerHTML = infoEl.innerHTML.replace(new RegExp(timerLabel + ' <b>[\\d.]+s<\\/b>'), `${timerLabel} <b>${devState.elapsed}s</b>`);
+    }, 100);
+  }
+  draw();
+}
+
+function devAngleInRange(deg) {
+  if (devState.difficulty === 'easy') return deg >= 5 && deg <= 30;
+  if (devState.difficulty === 'medium') return deg > 30 && deg <= 55;
+  if (devState.difficulty === 'hard') return deg > 55 && deg <= 85;
+  return deg >= 5 && deg <= 85;
+}
+
+function devGoTo(index) {
+  if (index < 0 || index >= devState.history.length) return;
+  devState.current = index;
+  const h = devState.history[index];
+  cueBall = {...h.cue};
+  targetBall = {...h.target};
+  selectedPocket = h.pocket;
+  devState.userPt = h.userPt;
+  devState.clicked = !!h.userPt;
+  if (devState.timer) { clearInterval(devState.timer); devState.timer = null; }
+  draw(); updateControls();
+}
+
+function devGetWorst(n) {
+  return devState.history.filter(h => h.dev !== null).sort((a, b) => b.dev - a.dev).slice(0, n);
+}
+
+function drawDevTest() {
+  drawTable();
+  const pocket = selectedPocket;
+  const pk = POCKETS[pocket];
+
+  // Only show pocket highlight and balls - no aiming aids
+  ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+  ctx.beginPath(); ctx.arc(pk.x, pk.y, POCKET_R+6, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(255,197,51,0.3)'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.restore();
+
+  drawBall(targetBall, '#cc3333', '', dragging === 'target');
+  drawBall(cueBall, '#ffffff', '', dragging === 'cue');
+
+  if (devState.clicked) {
+    const ghost = getGhostPos(cueBall, targetBall, pocket);
+    // Show correct ghost ball
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath(); ctx.arc(ghost.x, ghost.y, BALL_R, 0, Math.PI*2);
+    ctx.fillStyle = '#59d499'; ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    // Show user click
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(scale, scale);
+    ctx.beginPath(); ctx.arc(devState.userPt.x, devState.userPt.y, 8, 0, Math.PI*2);
+    ctx.fillStyle = '#ff5555'; ctx.fill();
+    ctx.restore();
+    // Deviation arrow
+    drawLine(devState.userPt, ghost, '#ff5555', 2);
+    const devDist = dist(devState.userPt, ghost);
+    const devMm = (devDist / BALL_R * 28.5).toFixed(1);
+    drawText({x:(devState.userPt.x+ghost.x)/2, y:(devState.userPt.y+ghost.y)/2}, `${devMm}mm`, '#ff5555', 20);
+    drawLine(cueBall, ghost, 'rgba(89,212,153,0.5)', 1.5, [8,5]);
+  }
+
+  // Scatter plot (bottom-left corner when we have answered questions)
+  const answered = devState.history.filter(h => h.dev !== null);
+  if (answered.length > 1) {
+    const plotR = 60, plotX = 80, plotY = H - 80;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(plotX, plotY, plotR, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+    // Crosshair
+    ctx.beginPath(); ctx.moveTo(plotX - plotR, plotY); ctx.lineTo(plotX + plotR, plotY);
+    ctx.moveTo(plotX, plotY - plotR); ctx.lineTo(plotX, plotY + plotR);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.stroke();
+    // Plot each answer deviation (scaled: 1 ball radius = plotR/3)
+    const scl = plotR / (BALL_R * 3);
+    answered.forEach((h, i) => {
+      const ghost = getGhostPos(h.cue, h.target, h.pocket);
+      const dx = (h.userPt.x - ghost.x) * scl;
+      const dy = (h.userPt.y - ghost.y) * scl;
+      const px = plotX + Math.max(-plotR+4, Math.min(plotR-4, dx));
+      const py = plotY + Math.max(-plotR+4, Math.min(plotR-4, dy));
+      ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI*2);
+      ctx.fillStyle = i === devState.current ? '#ffc533' : '#ff5555';
+      ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(L().info.devScatter, plotX, plotY + plotR + 14);
+    ctx.restore();
+  }
+
+  // Stats
+  const trials = devState.trials;
+  const qNum = devState.current + 1;
+  const qTotal = devState.history.length;
+  if (trials.length > 0) {
+    const avgDev = trials.reduce((s,t) => s + t.dev, 0) / trials.length;
+    const avgDir = trials.reduce((s,t) => s + t.dirX, 0) / trials.length;
+    const avgTime = trials.reduce((s,t) => s + (t.time||0), 0) / trials.length;
+    const di = L().info;
+    const dirLabel = avgDir > 0.5 ? di.biasRight : avgDir < -0.5 ? di.biasLeft : di.biasCenter;
+    const cutAng = getCutAngle(cueBall, targetBall, pocket);
+    const cutDeg = (cutAng * 180 / Math.PI).toFixed(0);
+    const timeStr = devState.clicked ? `${(devState.history[devState.current]?.time||0).toFixed(1)}s` : `${devState.elapsed||0}s`;
+    infoEl.innerHTML = `<span class="info-tag">${di.qNum} <b>${qNum}/${qTotal}</b> ${di.qUnit}</span><span class="info-tag primary">${di.cutAngle} <b>${cutDeg}°</b></span><span class="info-tag">${di.timer} <b>${timeStr}</b></span><span class="info-tag">${di.avgDev} <b>${(avgDev/BALL_R*28.5).toFixed(1)}mm</b></span><span class="info-tag">${di.avgTime} <b>${avgTime.toFixed(1)}s</b></span><span class="info-tag">${di.dir} <b>${dirLabel}</b></span>`;
+  } else {
+    infoEl.innerHTML = `<span class="info-tag">${L().info.clickGhost}</span>`;
+  }
+}
+
+// --- Main draw ---
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  if (currentTab === 'aim') drawAim();
+  else if (currentTab === 'train') drawTrain();
+  else if (currentTab === 'hitpoint') drawHitpoint();
+  else if (currentTab === 'kick') drawKick();
+  else if (currentTab === 'position') drawPosition();
+  else if (currentTab === 'devtest') drawDevTest();
+}
+
+// --- Controls ---
+function makeGroup() { const g = document.createElement('div'); g.className = 'ctrl-group'; return g; }
+
+function updateControls() {
+  const l = L();
+  ctrlEl.innerHTML = '';
+  if (currentTab === 'aim') {
+    const g1 = makeGroup();
+    for (const m of AIM_MODES) {
+      const btn = document.createElement('button');
+      btn.className = 'btn' + (aimMode === m ? ' active' : '');
+      btn.textContent = l.aimLabels[m];
+      btn.onclick = () => { aimMode = m; updateControls(); draw(); };
+      g1.appendChild(btn);
+    }
+    ctrlEl.appendChild(g1);
+    const g2 = makeGroup();
+    const pBtn = document.createElement('button');
+    pBtn.className = 'btn'; pBtn.textContent = l.btn.changePocket;
+    pBtn.onclick = () => { selectedPocket = (selectedPocket + 1) % 6; draw(); };
+    g2.appendChild(pBtn);
+    const gBtn = document.createElement('button');
+    gBtn.className = 'btn' + (showGrid ? ' active' : '');
+    gBtn.textContent = l.btn.grid;
+    gBtn.onclick = () => { showGrid = !showGrid; draw(); updateControls(); };
+    g2.appendChild(gBtn);
+    ctrlEl.appendChild(g2);
+  }
+  else if (currentTab === 'train') {
+    const g1 = makeGroup();
+    const ranges = ['0-15°','15-30°','30-45°','45-60°','60-90°'];
+    ranges.forEach((label, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      if (trainState.answered) {
+        const correctIdx = [0,15,30,45,60].findIndex((v,idx) => trainState.currentAngle >= v && trainState.currentAngle < [15,30,45,60,90][idx]);
+        if (i === correctIdx) btn.style.borderColor = '#59d499';
+        if (i === trainState.lastRange && !trainState.lastCorrect) btn.style.borderColor = '#ff5555';
+      }
+      btn.textContent = label;
+      btn.onclick = () => trainAnswer(i);
+      g1.appendChild(btn);
+    });
+    ctrlEl.appendChild(g1);
+    if (trainState.answered) {
+      const g2 = makeGroup();
+      const next = document.createElement('button');
+      next.className = 'btn'; next.textContent = l.btn.next;
+      next.style.borderColor = '#ffc533'; next.style.color = '#ffc533';
+      next.onclick = () => { trainNewQuestion(); updateControls(); };
+      g2.appendChild(next);
+      ctrlEl.appendChild(g2);
+    }
+    const score = document.createElement('span');
+    score.className = 'score';
+    score.textContent = `${trainState.score}/${trainState.total}`;
+    ctrlEl.appendChild(score);
+  }
+  else if (currentTab === 'hitpoint') {
+    const g1 = makeGroup();
+    const spins = [['↖','↑','↗'],['←','●','→'],['↙','↓','↘']];
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        const btn = document.createElement('button');
+        btn.className = 'btn' + (spinPt.row===r && spinPt.col===c ? ' active' : '');
+        btn.textContent = spins[r][c];
+        btn.style.padding = '6px 10px';
+        btn.onclick = () => { spinPt = {row:r, col:c}; updateControls(); draw(); };
+        g1.appendChild(btn);
+      }
+    }
+    ctrlEl.appendChild(g1);
+    const g2 = makeGroup();
+    for (let p = 1; p <= 5; p++) {
+      const btn = document.createElement('button');
+      btn.className = 'btn' + (powerLv === p ? ' active' : '');
+      btn.textContent = p;
+      btn.onclick = () => { powerLv = p; updateControls(); draw(); };
+      g2.appendChild(btn);
+    }
+    ctrlEl.appendChild(g2);
+  }
+  else if (currentTab === 'kick') {
+    const g1 = makeGroup();
+    const modes = [['diamond', l.btn.diamond], ['auto', l.btn.autoKick]];
+    modes.forEach(([k,v]) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn' + (kickMode===k ? ' active' : '');
+      btn.textContent = v;
+      btn.onclick = () => { kickMode = k; updateControls(); draw(); };
+      g1.appendChild(btn);
+    });
+    ctrlEl.appendChild(g1);
+    if (kickMode === 'auto') {
+      const g2 = makeGroup();
+      const addOb = document.createElement('button');
+      addOb.className = 'btn'; addOb.textContent = l.btn.addObs;
+      addOb.onclick = () => {
+        kickObstacles.push({x: TABLE_W*0.3 + Math.random()*TABLE_W*0.4, y: TABLE_H*0.2 + Math.random()*TABLE_H*0.6});
+        draw();
+      };
+      g2.appendChild(addOb);
+      const clearOb = document.createElement('button');
+      clearOb.className = 'btn warn'; clearOb.textContent = l.btn.clearObs;
+      clearOb.onclick = () => { kickObstacles = []; draw(); };
+      g2.appendChild(clearOb);
+      ctrlEl.appendChild(g2);
+    }
+  }
+  else if (currentTab === 'position') {
+    const g1 = makeGroup();
+    const spins = [l.btn.follow, l.btn.stun, l.btn.draw];
+    spins.forEach((label, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn' + (spinPt.row === i && spinPt.col === 1 ? ' active' : '');
+      btn.textContent = label;
+      btn.onclick = () => { spinPt = {row:i, col:1}; updateControls(); draw(); };
+      g1.appendChild(btn);
+    });
+    ctrlEl.appendChild(g1);
+    const g2 = makeGroup();
+    for (let p = 1; p <= 5; p++) {
+      const btn = document.createElement('button');
+      btn.className = 'btn' + (powerLv === p ? ' active' : '');
+      btn.textContent = l.power(p);
+      btn.onclick = () => { powerLv = p; updateControls(); draw(); };
+      g2.appendChild(btn);
+    }
+    ctrlEl.appendChild(g2);
+    const g3 = makeGroup();
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'btn warn'; clearBtn.textContent = l.btn.clearTarget;
+    clearBtn.onclick = () => { posTarget = null; draw(); };
+    g3.appendChild(clearBtn);
+    ctrlEl.appendChild(g3);
+  }
+  else if (currentTab === 'devtest') {
+    const g1 = makeGroup();
+    if (devState.current > 0) {
+      const prev = document.createElement('button');
+      prev.className = 'btn'; prev.textContent = l.btn.prev;
+      prev.onclick = () => devGoTo(devState.current - 1);
+      g1.appendChild(prev);
+    }
+    if (devState.clicked || devState.history.length === 0) {
+      const next = document.createElement('button');
+      next.className = 'btn'; next.textContent = devState.trials.length >= 10 ? l.btn.restart : l.btn.next;
+      next.style.borderColor = '#ffc533'; next.style.color = '#ffc533';
+      next.onclick = () => {
+        if (devState.trials.length >= 10) { devState.trials = []; devState.history = []; }
+        if (devState.current < devState.history.length - 1) {
+          devGoTo(devState.current + 1);
+        } else {
+          devNewQuestion(); updateControls();
+        }
+      };
+      g1.appendChild(next);
+    }
+    ctrlEl.appendChild(g1);
+    const g2 = makeGroup();
+    const diffs = [['mixed',l.btn.mixed],['easy',l.btn.easy],['medium',l.btn.medium],['hard',l.btn.hard]];
+    diffs.forEach(([k,v]) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn' + (devState.difficulty === k ? ' active' : '');
+      btn.textContent = v;
+      btn.onclick = () => { devState.difficulty = k; updateControls(); };
+      g2.appendChild(btn);
+    });
+    ctrlEl.appendChild(g2);
+    const worst = devGetWorst(3);
+    if (worst.length > 0 && devState.trials.length >= 3) {
+      const g3 = makeGroup();
+      const retry = document.createElement('button');
+      retry.className = 'btn warn'; retry.textContent = l.btn.retryWorst;
+      retry.onclick = () => {
+        devState.trials = []; devState.history = [];
+        worst.forEach(w => { devNewQuestion(w); });
+        devGoTo(0);
+      };
+      g3.appendChild(retry);
+      ctrlEl.appendChild(g3);
+    }
+    if (devState.trials.length > 0) {
+      const score = document.createElement('span');
+      score.className = 'score';
+      const avgDev = devState.trials.reduce((s,t) => s+t.dev, 0) / devState.trials.length;
+      score.textContent = `${devState.trials.length}/10 | ${l.info.avgDev}${(avgDev/BALL_R*28.5).toFixed(1)}mm`;
+      ctrlEl.appendChild(score);
+    }
+  }
+}
+
+// --- Interaction ---
+function getPointerPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left;
+  const sy = e.clientY - rect.top;
+  return toTable(sx, sy);
+}
+
+function hitTest(pos) {
+  if (dist(pos, cueBall) < BALL_R * 1.5) return 'cue';
+  if (dist(pos, targetBall) < BALL_R * 1.5) return 'target';
+  for (let i = 0; i < kickObstacles.length; i++) {
+    if (dist(pos, kickObstacles[i]) < BALL_R * 1.5) return 'obstacle_' + i;
+  }
+  return null;
+}
+
+canvas.addEventListener('pointerdown', e => {
+  const pos = getPointerPos(e);
+
+  // Check if clicking on ball view (screen coords)
+  if (currentTab === 'hitpoint' && ballViewPos) {
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+    const dxBv = sx - ballViewPos.x, dyBv = sy - ballViewPos.y;
+    if (Math.sqrt(dxBv*dxBv + dyBv*dyBv) < 55) {
+      draggingBallView = true;
+      canvas.style.cursor = 'grabbing';
+      return;
+    }
+  }
+
+  if (currentTab === 'devtest' && !devState.clicked) {
+    devState.clicked = true;
+    devState.userPt = pos;
+    const ghost = getGhostPos(cueBall, targetBall, selectedPocket);
+    const dev = dist(pos, ghost);
+    const dirX = pos.x - ghost.x;
+    const elapsed = ((Date.now() - devState.startTime) / 1000);
+    devState.trials.push({dev, dirX, time: elapsed});
+    if (devState.timer) { clearInterval(devState.timer); devState.timer = null; }
+    const h = devState.history[devState.current];
+    if (h) { h.userPt = pos; h.dev = dev; h.dirX = dirX; h.time = elapsed; }
+    draw(); updateControls();
+    return;
+  }
+
+  if (currentTab === 'position') {
+    const hit = hitTest(pos);
+    if (!hit && pos.x > 0 && pos.x < TABLE_W && pos.y > 0 && pos.y < TABLE_H) {
+      if (!hitTest(pos)) { posTarget = pos; draw(); updateControls(); return; }
+    }
+  }
+
+  const hit = hitTest(pos);
+  if (hit) { dragging = hit; canvas.style.cursor = 'grabbing'; }
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (draggingBallView) {
+    const rect = canvas.getBoundingClientRect();
+    ballViewPos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+    draw();
+    return;
+  }
+  if (!dragging) return;
+  const pos = getPointerPos(e);
+  const clamped = {
+    x: Math.max(BALL_R, Math.min(TABLE_W - BALL_R, pos.x)),
+    y: Math.max(BALL_R, Math.min(TABLE_H - BALL_R, pos.y))
+  };
+  if (dragging === 'cue') cueBall = clamped;
+  else if (dragging === 'target') targetBall = clamped;
+  else if (dragging.startsWith('obstacle_')) {
+    kickObstacles[parseInt(dragging.split('_')[1])] = clamped;
+  }
+  if (currentTab === 'aim' || currentTab === 'hitpoint' || currentTab === 'position') {
+    selectedPocket = findBestPocket(cueBall, targetBall);
+  }
+  draw();
+});
+
+canvas.addEventListener('pointerup', () => {
+  dragging = null;
+  draggingBallView = false;
+  canvas.style.cursor = 'default';
+});
+
+// --- Tab switching ---
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab = tab.dataset.tab;
+    if (currentTab === 'train' && trainState.total === 0) trainNewQuestion();
+    if (currentTab === 'devtest' && devState.trials.length === 0) devNewQuestion();
+    ctrlEl.style.opacity = '0';
+    updateControls();
+    draw();
+    requestAnimationFrame(() => { ctrlEl.style.opacity = '1'; });
+  });
+});
+
+// --- i18n functions ---
+function updateTabs() {
+  const tabs = L().tabs;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.textContent = tabs[t.dataset.tab];
+  });
+}
+
+function rebuildFaq() {
+  const f = L().faq;
+  document.getElementById('faq-title').textContent = f.title;
+  const body = document.getElementById('faq-body');
+  const listHtml = items => '<ul>' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+  let html = `<div class="faq-general"><h3>${f.general.title}</h3><div class="faq-text">${listHtml(f.general.items)}</div></div>`;
+  const modules = ['aim','train','hitpoint','kick','position','devtest'];
+  modules.forEach(m => {
+    const sec = f[m];
+    html += `<section><h3>${sec.title}</h3><canvas class="faq-canvas" data-faq="${m}" width="420" height="200"></canvas><div class="faq-text"><p>${sec.desc}</p>`;
+    if (m === 'kick') {
+      html += `<p>${sec.diamondTitle}</p>${listHtml(sec.diamondItems)}<p>${sec.autoTitle}</p>${listHtml(sec.autoItems)}`;
+    } else {
+      html += listHtml(sec.items);
+      if (sec.sub) html += `<p>${sec.sub}</p>`;
+    }
+    html += '</div></section>';
+  });
+  body.innerHTML = html;
+}
+
+function switchLang(code) {
+  curLang = code;
+  localStorage.setItem('bl-lang', code);
+  document.getElementById('lang-sel').value = code;
+  updateTabs();
+  updateControls();
+  draw();
+  if (document.getElementById('faq').style.display !== 'none') {
+    rebuildFaq();
+    drawFaqDiagrams();
+  }
+}
+
+// --- FAQ Diagrams ---
+function drawFaqDiagrams() {
+  const c = L().canvas;
+  document.querySelectorAll('.faq-canvas').forEach(cvs => {
+    const ctx = cvs.getContext('2d');
+    const w = cvs.width, h = cvs.height;
+    const type = cvs.dataset.faq;
+    ctx.fillStyle = '#1a5c2a';
+    ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = '#3a3'; ctx.lineWidth = 3;
+    ctx.strokeRect(4, 4, w-8, h-8);
+
+    const drawBall = (x, y, color, r=10) => {
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fillStyle = color; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+    };
+    const drawArrow = (x1, y1, x2, y2, color, dash=[]) => {
+      ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash(dash);
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      const ang = Math.atan2(y2-y1, x2-x1);
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 10*Math.cos(ang-0.4), y2 - 10*Math.sin(ang-0.4));
+      ctx.lineTo(x2 - 10*Math.cos(ang+0.4), y2 - 10*Math.sin(ang+0.4));
+      ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+      ctx.restore();
+    };
+    const label = (text, x, y, color='#fff', size=11) => {
+      ctx.font = `${size}px sans-serif`; ctx.fillStyle = color;
+      ctx.textAlign = 'center'; ctx.fillText(text, x, y);
+    };
+
+    if (type === 'aim') {
+      const cx=80, cy=120, gx=180, gy=100, tx=220, ty=85, px=380, py=30;
+      drawArrow(cx, cy, gx, gy, '#ffcc00', [5,4]);
+      drawBall(gx, gy, 'rgba(0,255,100,0.3)', 12);
+      drawBall(tx, ty, '#e33', 10);
+      drawBall(cx, cy, '#fff', 10);
+      drawArrow(tx, ty, px, py, 'rgba(255,255,255,0.7)', [4,3]);
+      label(c.cueBall, cx, cy+24, '#ccc');
+      label(c.ghostBall, gx, gy+24, '#8f8');
+      label(c.targetBall, tx, ty-16, '#f88');
+      label(c.pocket, px, py+20, '#ccc');
+      ctx.beginPath();
+      const a1 = Math.atan2(gy-ty, gx-tx), a2 = Math.atan2(py-ty, px-tx);
+      ctx.arc(tx, ty, 30, a2, a1); ctx.strokeStyle='#ff0'; ctx.lineWidth=1.5; ctx.setLineDash([]); ctx.stroke();
+      label(c.cutAngle, tx+35, ty+5, '#ff0');
+    }
+    else if (type === 'train') {
+      drawBall(100, 120, '#fff', 10);
+      drawBall(250, 80, '#e33', 10);
+      const opts = ['15°','30°','45°','60°','75°'];
+      opts.forEach((o, i) => {
+        const bx = 60 + i*70, by = 170;
+        ctx.fillStyle = i===2 ? '#4a4' : '#333';
+        ctx.fillRect(bx-22, by-12, 44, 24);
+        ctx.strokeStyle = '#666'; ctx.lineWidth=1; ctx.strokeRect(bx-22, by-12, 44, 24);
+        label(o, bx, by+4, '#fff', 11);
+      });
+      drawArrow(100, 120, 250, 80, '#ffcc00', [4,3]);
+      label(c.randomSetup, 175, 40, '#aaa', 12);
+      label(c.chooseAngle, 175, 155, '#aaa', 11);
+    }
+    else if (type === 'hitpoint') {
+      const bx=340, by=50;
+      ctx.beginPath(); ctx.arc(bx, by, 30, 0, Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#888'; ctx.lineWidth=1; ctx.stroke();
+      ctx.beginPath(); ctx.arc(bx, by-12, 4, 0, Math.PI*2); ctx.fillStyle='#e33'; ctx.fill();
+      label(c.hitPtFace, bx, by+48, '#ccc', 10);
+      const cx=60, cy=130, tx=180, ty=90;
+      drawBall(cx, cy, '#fff', 9);
+      drawBall(tx, ty, '#e33', 9);
+      const gx=tx-20, gy=ty+12;
+      drawArrow(gx, gy, gx-50, gy-50, 'rgba(255,120,80,0.8)');
+      drawArrow(gx, gy, gx+30, gy-55, 'rgba(180,180,180,0.8)');
+      drawArrow(gx, gy, gx+60, gy+10, 'rgba(120,200,255,0.8)');
+      label(c.follow, gx-55, gy-55, '#f87', 10);
+      label(c.stun, gx+35, gy-60, '#bbb', 10);
+      label(c.draw, gx+70, gy+5, '#8cf', 10);
+    }
+    else if (type === 'kick') {
+      drawBall(60, 150, '#fff', 9);
+      drawBall(340, 140, '#e33', 9);
+      const rx=200, ry=8;
+      drawArrow(60, 150, rx, ry, '#f80', []);
+      drawArrow(rx, ry, 340, 140, '#f80', [5,3]);
+      ctx.beginPath(); ctx.arc(rx, ry, 5, 0, Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+      label(c.rail1, 200, 40, '#f80', 10);
+      ctx.setLineDash([3,3]); ctx.strokeStyle='#48f'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(60,150); ctx.lineTo(30,80); ctx.lineTo(150,8); ctx.lineTo(340,140); ctx.stroke();
+      ctx.setLineDash([]);
+      label(c.rail2, 80, 65, '#48f', 10);
+      drawBall(200, 100, '#555', 9);
+      label(c.obs, 200, 120, '#888', 9);
+    }
+    else if (type === 'position') {
+      const cx=100, cy=130, gx=180, gy=90;
+      drawBall(cx, cy, '#fff', 9);
+      drawBall(210, 80, '#e33', 9);
+      ctx.save(); ctx.globalAlpha = 0.2;
+      ctx.beginPath(); ctx.moveTo(gx, gy);
+      ctx.arc(gx, gy, 70, -2.2, -1.2); ctx.closePath();
+      ctx.fillStyle='#4f4'; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(gx, gy);
+      ctx.arc(gx, gy, 70, -0.5, 0.5); ctx.closePath();
+      ctx.fillStyle='#4af'; ctx.fill();
+      ctx.restore();
+      ctx.beginPath(); ctx.arc(300, 50, 8, 0, Math.PI*2);
+      ctx.strokeStyle='#ff0'; ctx.lineWidth=2; ctx.stroke();
+      label(c.target, 300, 70, '#ff0', 10);
+      drawArrow(gx, gy, 300, 50, '#f80', [4,3]);
+      label(c.followZone, gx-40, gy-50, '#8f8', 10);
+      label(c.drawZone, gx+50, gy+10, '#8cf', 10);
+    }
+    else if (type === 'devtest') {
+      const sx=30, sy=30, sw=120, sh=120;
+      ctx.strokeStyle='#555'; ctx.lineWidth=1;
+      ctx.strokeRect(sx, sy, sw, sh);
+      ctx.beginPath(); ctx.moveTo(sx+sw/2, sy); ctx.lineTo(sx+sw/2, sy+sh);
+      ctx.moveTo(sx, sy+sh/2); ctx.lineTo(sx+sw, sy+sh/2);
+      ctx.strokeStyle='#444'; ctx.stroke();
+      const dots = [[50,60,'#e33'],[70,80,'#e33'],[90,50,'#e33'],[85,95,'#e33'],[60,100,'#e33'],[100,70,'#ff0']];
+      dots.forEach(([dx,dy,cl]) => { ctx.beginPath(); ctx.arc(dx,dy,4,0,Math.PI*2); ctx.fillStyle=cl; ctx.fill(); });
+      label(c.scatter, sx+sw/2, sy+sh+16, '#aaa', 10);
+      label(c.historyDot, sx+sw/2-20, sy+sh+30, '#e33', 9);
+      label(c.currentDot, sx+sw/2+30, sy+sh+30, '#ff0', 9);
+      const fx=220, fy=40;
+      label(c.flow, fx, fy, '#ccc', 12);
+      label(c.flowDesc, fx+80, fy+20, '#aaa', 11);
+      label(c.diffLabel, fx+60, fy+50, '#aaa', 11);
+      label(c.after10, fx+60, fy+75, '#aaa', 11);
+      label(c.retryWorst, fx+40, fy+100, '#aaa', 11);
+    }
+  });
+}
+
+// --- Init ---
+document.getElementById('lang-sel').value = curLang;
+updateTabs();
+selectedPocket = findBestPocket(cueBall, targetBall);
+resize();
+updateControls();
+</script>
+</body>
+</html>
